@@ -5,3 +5,14 @@ TD {
 	font-family: monospace;
 	font-size: 10px;
 }
+
+#columns {
+	position: fixed;
+	top: 64px;
+	right: 0px;
+	padding-right: 16px;
+	border: 1px solid black;
+	border-right: none;
+	background: white;
+	border-radius: 16px 0px 0px 16px;
+}

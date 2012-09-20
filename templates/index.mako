@@ -8,6 +8,9 @@
 	<body>
 		<h1>Ploddle!</h1>
 		
+		<form id="columns">
+		</form>
+
 		<form id="filters">
 			<table>
 				<thead id="headings">

@@ -158,7 +158,7 @@ class PloddleCollector(threading.Thread):
                     message = therest
 
                 priority = int(priority)
-                serverity = priority & 0x07
+                severity = priority & 0x07
                 facility = priority >> 3
             except Exception:
                 logging.exception("Error parsing packet from %s: %s " % (str(host), str(data)))
@@ -166,7 +166,7 @@ class PloddleCollector(threading.Thread):
 
             doc = {
                 "host": host,
-                "serverity": serverity,
+                "severity": severity,
                 "facility": facility,
                 "message": message,
                 "timestamp": datetime.datetime.utcnow(),

@@ -49,8 +49,8 @@ var columns = {
 			return row["message"];
 		},
 	},
-	"source": {
-		name: "Source",
+	"source1": {
+		name: "Source Function",
 		filter: '<input name="module" id="module">',
 		init: function() {
 		},
@@ -58,8 +58,17 @@ var columns = {
 			return row["module"]+":"+row["funcName"];
 		},
 	},
-	"all": {
-		name: "All",
+	"source2": {
+		name: "Source Code",
+		filter: '<input name="module" id="module">',
+		init: function() {
+		},
+		render: function(row) {
+			return row["filename"]+":"+row["lineno"];
+		},
+	},
+	"debug": {
+		name: "Debug Info",
 		filter: '',
 		init: function() {
 		},
@@ -73,20 +82,28 @@ var active_columns = [
 	"host",
 	"timestamp",
 	"daemon",
-	"thread",
 	"message",
-	"source",
-	"all",
+	"source2",
+];
+
+var severity_colours = [
+	["black", "red"],
+	["red", "white"],
+	["red", "white"],
+	["orange", "white"],
+	["orange", "white"],
+	["green", "white"],
+	["blue", "white"],
+	["grey", "white"]
 ];
 
 function json_to_select(url, select) {
 	$.getJSON(url, {}, function(data) {
-    	var options = '';
-		options += '<option value="">All</option>';
-    	for (var i = 0; i < data.length; i++) {
-      		options += '<option value="' + data[i] + '">' + data[i] + '</option>';
-    	}
-    	$(select).html(options);
+    	$(select).empty();
+		$(select).append($('<option value="">All</option>'));
+		$(data).each(function(i, val) {
+			$(select).append($('<option value="'+val+'">'+val+'</option>'));
+    	});
 	});
 }
 
@@ -97,16 +114,43 @@ function render_header() {
 		titles.append($("<td/>").text(columns[colname].name));
 		filters.append($("<td/>").html(columns[colname].filter));
 	});
+
+	$("#headings").empty();
 	$("#headings").append(titles);
 	$("#headings").append(filters);
 
-	for (var f = 0; f < active_columns.length; f++) {
-		columns[active_columns[f]].init();
-	}
+	$(active_columns).each(function(f, colname) {
+		columns[colname].init();
+	});
+}
+
+function render_colsel() {
+	var list = $("<ul/>");
+	$.each(columns, function(colname, colspec) {
+		checked = $.inArray(colname, active_columns) >= 0 ? " checked" : "";
+		list.append($("<li><label><input type='checkbox' name='"+colname+"' value='"+colname+"'"+checked+"> "+columns[colname].name+"</label>"));
+	});
+	$("#columns").append(list);
+
+	$("#columns input[type='checkbox']").click(function(e) {
+		console.log("Updating columns");
+		active_columns = [];
+		$("#columns input[type='checkbox']").each(function(i, el) {
+			if($(el).is(":checked")) {
+				active_columns.push($(el).val());
+			}
+		});
+		render_header();
+		get_data();
+	});
 }
 
 function render_row(row) {
 	var html_row = $("<tr/>");
+	if(row["severity"]) {
+		html_row.css("color", severity_colours[row["severity"]][0]);
+		html_row.css("background-color", severity_colours[row["severity"]][1]);
+	}
 	$(active_columns).each(function(f, colname) {
 		html_row.append($("<td/>").text(
 			columns[colname].render(row)
@@ -121,6 +165,7 @@ function get_data() {
 			$("#filters").serialize(),
 			function(response)
 	{
+		$("#messages").empty();
     	for (var i = 0; i < response.messages.length; i++) {
 			render_row(response.messages[i]);
     	}
@@ -128,6 +173,7 @@ function get_data() {
 }
 
 $(function() {
+	render_colsel();
 	render_header();
 	get_data();
 });
