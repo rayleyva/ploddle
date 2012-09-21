@@ -86,17 +86,6 @@ var active_columns = [
 	"source2",
 ];
 
-var severity_colours = [
-	["black", "red"],
-	["red", "white"],
-	["red", "white"],
-	["orange", "white"],
-	["orange", "white"],
-	["green", "white"],
-	["blue", "white"],
-	["grey", "white"]
-];
-
 function json_to_select(url, select) {
 	$.getJSON(url, {}, function(data) {
     	$(select).empty();
@@ -148,8 +137,7 @@ function render_colsel() {
 function render_row(row) {
 	var html_row = $("<tr/>");
 	if(row["severity"]) {
-		html_row.css("color", severity_colours[row["severity"]][0]);
-		html_row.css("background-color", severity_colours[row["severity"]][1]);
+		html_row.addClass("severity-"+row["severity"]);
 	}
 	$(active_columns).each(function(f, colname) {
 		html_row.append($("<td/>").text(
