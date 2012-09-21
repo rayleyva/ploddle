@@ -89,6 +89,8 @@ class PloddleViewer(threading.Thread):
             filters["host"] = request.GET.get("host")
         if request.GET.get("daemon"):
             filters["daemon"] = request.GET.get("daemon")
+        if request.GET.get("severity"):
+            filters["severity"] = {"$lte": int(request.GET.get("severity"))}
 
         page_size = 50
         page = int(request.GET.get("page", 1)) - 1

@@ -1,4 +1,20 @@
 var columns = {
+	"severity": {
+		name: "Sev.",
+		filter: '<select name="severity" id="severity">'+
+			'<option value="2">Crit</option>'+
+			'<option value="3">Error</option>'+
+			'<option value="4">Warn</option>'+
+			'<option value="6">Info</option>'+
+			'<option value="7" selected>Debug</option>'+
+		'</select>',
+		init: function() {
+			$("#severity").change(get_data);
+		},
+		render: function(row) {
+			return row["severity"];
+		},
+	},
 	"host": {
 		name: "Host",
 		filter: '<select name="host" id="host"></select>',
