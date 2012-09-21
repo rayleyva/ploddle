@@ -16,3 +16,12 @@ TD {
 	background: white;
 	border-radius: 16px 0px 0px 16px;
 }
+
+.severity-0 {color: black;  background-color: #F44;}
+.severity-1 {color: black;  background-color: #F44;}
+.severity-2 {color: black;  background-color: #F44;} /* critical */
+.severity-3 {color: black;  background-color: #F88;} /* error, fatal */
+.severity-4 {color: black;  background-color: #EE2;} /* warning */
+.severity-5 {color: black;  background-color: #EE2;}
+.severity-6 {color: black;  background-color: #8F8;} /* info */
+.severity-7 {color: grey;   background-color: #DFD;} /* debug */
