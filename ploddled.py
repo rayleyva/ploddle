@@ -11,6 +11,7 @@ import re
 import threading
 import json
 import datetime
+from pprint import pformat
 from socket import *
 
 
@@ -21,7 +22,7 @@ from socket import *
 def get_logger(config):
     try:
         logging.basicConfig(
-                level=logging.DEBUG,
+                level=logging.INFO,
                 format='%(asctime)s %(levelname)-8s %(message)s',
                 )  # filename=config.get("logging", "file"))
         return True
@@ -183,9 +184,7 @@ class PloddleCollector(threading.Thread):
                 doc["daemon"] = match_std.group(1)
                 doc["message"] = match_std.group(2)
 
-            from pprint import pprint
-            print "inserting"
-            pprint(doc)
+            logging.debug("inserting: "+pformat(doc))
             coll.insert(doc)
 
 
