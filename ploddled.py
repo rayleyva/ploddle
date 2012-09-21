@@ -93,7 +93,7 @@ class PloddleViewer(threading.Thread):
         if request.GET.get("severity"):
             filters["severity"] = {"$lte": int(request.GET.get("severity"))}
 
-        page_size = 50
+        page_size = 5000
         page = int(request.GET.get("page", 1)) - 1
         #if request.GET.get("message"):
         #    w.append("message ILIKE %s")
