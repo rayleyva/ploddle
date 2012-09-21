@@ -43,7 +43,7 @@ class PloddleFormatter(logging.Formatter):
 
 
 class PloddleHandler(SysLogHandler):
-    def __init__(self, addr, port, daemonName=None):
+    def __init__(self, addr='localhost', port=5141, daemonName=None):
         if not daemonName:
             daemonName = sys.argv[0]
         logging.handlers.SysLogHandler.__init__(self, address=(addr, port))
@@ -53,7 +53,7 @@ class PloddleHandler(SysLogHandler):
 if __name__ == "__main__":
     my_logger = logging.getLogger('ploddle.demo')
     my_logger.setLevel(logging.DEBUG)
-    my_logger.addHandler(PloddleHandler('localhost', 5141))
+    my_logger.addHandler(PloddleHandler())
 
     my_logger.debug('this is debug')
     my_logger.info('this is info')
