@@ -76,7 +76,10 @@ class PloddleViewer(threading.Thread):
         config.add_view(self.api_daemons, route_name='api_daemons', renderer='json')
 
         self.database = get_database(config_file)
-        self.server = make_server('0.0.0.0', 5140, config.make_wsgi_app())
+
+        host = config.get("viewer", "host")
+        port = config.getint("viewer", "port")
+        self.server = make_server(host, port, config.make_wsgi_app())
 
     def index(self, request):
         return dict()
