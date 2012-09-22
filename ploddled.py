@@ -77,8 +77,8 @@ class PloddleViewer(threading.Thread):
 
         self.database = get_database(config_file)
 
-        host = config.get("viewer", "host")
-        port = config.getint("viewer", "port")
+        host = config_file.get("viewer", "host")
+        port = config_file.getint("viewer", "port")
         self.server = make_server(host, port, config.make_wsgi_app())
 
     def index(self, request):
