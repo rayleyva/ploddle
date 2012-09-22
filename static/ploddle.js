@@ -145,8 +145,7 @@ function render_colsel() {
 }
 
 function render_paginator(p, ps) {
-	$("#page").text(p);
-	$("#pages").text(ps);
+	$("#paginator").text(p+" / "+ps);
 }
 
 function render_row(row) {

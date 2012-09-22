@@ -14,8 +14,7 @@
 			<div>
 				<a href="#" id="firstpage">&#x21E4;</a>
 				<a href="#" id="prevpage">&#x2190;</a>
-				<span id="page"></span> /
-				<span id="pages"></span>
+				<span id="paginator"></span>
 				<a href="#" id="nextpage">&#x2192;</a>
 				<a href="#" id="lastpage">&#x21E5;</a>
 			</div>
