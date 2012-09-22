@@ -55,7 +55,12 @@ var columns = {
 		init: function() {
 		},
 		render: function(row) {
-			return row["module"]+":"+row["funcName"];
+			if(row["module"]) {
+				return row["module"]+":"+row["funcName"];
+			}
+			else {
+				return "-";
+			}
 		},
 	},
 	"source2": {
@@ -64,7 +69,12 @@ var columns = {
 		init: function() {
 		},
 		render: function(row) {
-			return row["filename"]+":"+row["lineno"];
+			if(row["filename"]) {
+				return row["filename"]+":"+row["lineno"];
+			}
+			else {
+				return "-";
+			}
 		},
 	},
 	"debug": {
