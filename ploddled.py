@@ -114,8 +114,8 @@ class PloddleViewer(threading.Thread):
                     doc[f] = m[f]
             safe_messages.append(doc)
         return {
-            "page": page,
-            "pages": pages,
+            "page": page + 1,
+            "pages": pages + 1,
             "messages": safe_messages,
         }
 

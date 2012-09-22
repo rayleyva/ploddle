@@ -144,6 +144,11 @@ function render_colsel() {
 	});
 }
 
+function render_paginator(p, ps) {
+	$("#page").text(p);
+	$("#pages").text(ps);
+}
+
 function render_row(row) {
 	var html_row = $("<tr/>");
 	if(row["severity"]) {
@@ -154,7 +159,7 @@ function render_row(row) {
 			columns[colname].render(row)
 		));
 	});
-    $("#messages").prepend(html_row);
+    $("#messages").append(html_row);
 }
 
 function get_data() {
@@ -163,6 +168,10 @@ function get_data() {
 			$("#filters").serialize(),
 			function(response)
 	{
+		render_paginator(response.page, response.pages);
+		$("#pageinput").val(response.page);
+		$("#pagesinput").val(response.pages);
+
 		$("#messages").empty();
     	for (var i = 0; i < response.messages.length; i++) {
 			render_row(response.messages[i]);
@@ -170,8 +179,36 @@ function get_data() {
 	});
 }
 
+function go_to_page(page) {
+	if(page >= 1 && page <= parseInt($("#pagesinput").val())) {
+		$("#pageinput").val(page);
+		get_data();
+	}
+}
+function go_to_relpage(relpage) {
+	go_to_page(parseInt($("#pageinput").val()) + relpage);
+}
+
 $(function() {
 	render_colsel();
 	render_header();
+	render_paginator(1, 1);
 	get_data();
+
+	$("#firstpage").click(function(e) {
+		go_to_page(1);
+		return false;
+	});
+	$("#prevpage").click(function(e) {
+		go_to_relpage(-1);
+		return false;
+	});
+	$("#nextpage").click(function(e) {
+		go_to_relpage(1);
+		return false;
+	});
+	$("#lastpage").click(function(e) {
+		go_to_page(parseInt($("#pagesinput").val()));
+		return false;
+	});
 });

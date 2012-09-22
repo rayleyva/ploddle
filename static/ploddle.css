@@ -6,7 +6,7 @@ TD {
 	font-size: 10px;
 }
 
-#columns {
+#controls {
 	position: fixed;
 	top: 64px;
 	right: 0px;
@@ -15,6 +15,9 @@ TD {
 	border-right: none;
 	background: white;
 	border-radius: 16px 0px 0px 16px;
+}
+#controls DIV {
+	text-align: center;
 }
 
 .severity-0 {color: black;  background-color: #F44;}
