@@ -90,10 +90,19 @@ class PloddleViewer(threading.Thread):
         filters = {}
         if request.GET.get("host"):
             filters["host"] = request.GET.get("host")
+        if request.GET.get("timestamp"):
+            date = datetime.datetime.strptime(request.GET.get("timestamp"), "%Y-%m-%d")
+            print date
+            filters["timestamp"] = {
+                "$gte": date,
+                "$lt": date + datetime.timedelta(days=1)
+            }
         if request.GET.get("daemon"):
             filters["daemon"] = request.GET.get("daemon")
         if request.GET.get("since"):
-            filters["timestamp"] = {"$gt": datetime.datetime.strptime(request.GET.get("since"), "%Y-%m-%d %H:%M:%S.%f")}
+            filters["timestamp"] = {
+                "$gt": datetime.datetime.strptime(request.GET.get("since"), "%Y-%m-%d %H:%M:%S.%f")
+            }
 
         page_size = 50
         page = int(request.GET.get("page", 1)) - 1

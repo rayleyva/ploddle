@@ -12,6 +12,7 @@ var columns = {
 		name: "Timestamp",
 		filter: '<input name="timestamp" id="timestamp" type="date">',
 		init: function() {
+			$("#timestamp").change(get_data_event);
 		},
 		render: function(row) {
 			return row["timestamp"].substring(0, 16);
