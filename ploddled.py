@@ -92,6 +92,8 @@ class PloddleViewer(threading.Thread):
             filters["host"] = request.GET.get("host")
         if request.GET.get("daemon"):
             filters["daemon"] = request.GET.get("daemon")
+        if request.GET.get("since"):
+            filters["timestamp"] = {"$gt": datetime.datetime.strptime(request.GET.get("since"), "%Y-%m-%d %H:%M:%S.%f")}
 
         page_size = 50
         page = int(request.GET.get("page", 1)) - 1
