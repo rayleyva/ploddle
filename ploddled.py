@@ -116,7 +116,7 @@ class PloddleViewer(threading.Thread):
                 if f[0] == "_":
                     pass
                 elif f == "timestamp":
-                    doc[f] = str(m[f])[:16]
+                    doc[f] = str(m[f])
                 else:
                     doc[f] = m[f]
             safe_messages.append(doc)

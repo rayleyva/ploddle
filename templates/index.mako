@@ -6,29 +6,36 @@
 		<link rel="stylesheet" type="text/css" href="/static/ploddle.css">
 	</head>
 	<body>
-		<h1>Ploddle!</h1>
-		
-		<div id="controls">
+		<header>
+			<form id="filters">
+				<input type="hidden" name="page" id="pageinput" value="1">
+				<input type="hidden" id="pagesinput" value="1">
+				<input type="hidden" name="since" id="since" value="">
+				<table id="headings"></table>
+			</form>
+		</header>
+
+		<section class="main">
+			<table id="messages">
+			</table>
+		</section>
+
+		<section class="settings">
 			<form id="columns">
 			</form>
-			<div>
+		</section>
+
+		<footer>
+			<span id="paginator">
 				<a href="#" id="firstpage">&#x21E4;</a>
 				<a href="#" id="prevpage">&#x2190;</a>
-				<span id="paginator"></span>
+				<span id="page"></span> /
+				<span id="pages"></span>
 				<a href="#" id="nextpage">&#x2192;</a>
 				<a href="#" id="lastpage">&#x21E5;</a>
-			</div>
-		</div>
-
-		<form id="filters">
-			<input type="hidden" name="page" id="pageinput" value="1">
-			<input type="hidden" name="pages" id="pagesinput" value="1">
-			<table>
-				<thead id="headings">
-				</thead>
-				<tbody id="messages">
-				</tbody>
-			</table>
-		</form>
+			</span>
+			&mdash;
+			<label><input type="checkbox" id="livemode"> Live Mode</label>
+		</footer>
 	</body>
 </html>
