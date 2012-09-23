@@ -5,7 +5,7 @@ var columns = {
 		init: function() {
 			json_to_select("/api/hosts.json", "#host");
 		},
-		width: "12em",
+		width: "8em",
 	},
 	"timestamp": {
 		name: "Timestamp",
@@ -13,7 +13,7 @@ var columns = {
 		render: function(row) {
 			return row["timestamp"].substring(0, 16);
 		},
-		width: "18em",
+		width: "10em",
 	},
 	"daemon": {
 		name: "Daemon",
@@ -21,11 +21,12 @@ var columns = {
 		init: function() {
 			json_to_select("/api/daemons.json", "#daemon");
 		},
-		width: "18em",
+		width: "12em",
 	},
 	"threadName": {
 		name: "Thread",
 		filter: '<input name="threadName" id="threadName">',
+		width: "12em",
 	},
 	"message": {
 		name: "Message",
@@ -42,6 +43,7 @@ var columns = {
 				return "-";
 			}
 		},
+		width: "18em",
 	},
 	"source2": {
 		name: "Source Code",
@@ -54,6 +56,7 @@ var columns = {
 				return "-";
 			}
 		},
+		width: "18em",
 	},
 	"debug": {
 		name: "Debug Info",
@@ -86,7 +89,7 @@ function render_header() {
 	var filters = $("<tr/>");
 	$(active_columns).each(function(f, colname) {
 		titles.append($("<td/>").text(columns[colname].name).css("width", columns[colname].width));
-		filters.append($("<td/>").html(columns[colname].filter));
+		filters.append($("<td/>").html(columns[colname].filter).css("width", columns[colname].width));
 	});
 
 	$("#headings").empty();
@@ -143,10 +146,11 @@ function render_row(row) {
 	}
 	$(active_columns).each(function(f, colname) {
 		var renderer = columns[colname].render ? columns[colname].render : function(row) {return row[colname]};
-		html_row.append($("<td/>").text(
-			renderer(row)
-			//columns[colname].render(row)
-		).css("width", columns[colname].width));
+		var rowel = $("<td/>");
+		rowel.text(renderer(row));
+		rowel.css("width", columns[colname].width);
+		rowel.addClass(colname);
+		html_row.append(rowel)
 	});
     $("#messages").append(html_row);
 }
