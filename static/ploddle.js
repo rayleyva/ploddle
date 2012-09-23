@@ -6,6 +6,7 @@ var columns = {
 			json_to_select("/api/hosts.json", "#host");
 			$("#host").change(get_data_event);
 		},
+		width: "12em",
 	},
 	"timestamp": {
 		name: "Timestamp",
@@ -15,6 +16,7 @@ var columns = {
 		render: function(row) {
 			return row["timestamp"].substring(0, 16);
 		},
+		width: "18em",
 	},
 	"daemon": {
 		name: "Daemon",
@@ -23,6 +25,7 @@ var columns = {
 			json_to_select("/api/daemons.json", "#daemon");
 			$("#daemon").change(get_data_event);
 		},
+		width: "18em",
 	},
 	"threadName": {
 		name: "Thread",
@@ -81,7 +84,6 @@ var active_columns = [
 	"timestamp",
 	"daemon",
 	"message",
-	"source2",
 ];
 
 function json_to_select(url, select) {
@@ -98,7 +100,7 @@ function render_header() {
 	var titles = $('<tr/>');
 	var filters = $("<tr/>");
 	$(active_columns).each(function(f, colname) {
-		titles.append($("<td/>").text(columns[colname].name));
+		titles.append($("<td/>").text(columns[colname].name).css("width", columns[colname].width));
 		filters.append($("<td/>").html(columns[colname].filter));
 	});
 
@@ -145,7 +147,7 @@ function render_paginator(p, ps) {
 }
 
 function render_row(row) {
-	var html_row = $("<tr/>");
+	var html_row = $("<tr class='message' />");
 	if(row["severity"]) {
 		html_row.addClass("severity-"+row["severity"]);
 	}
@@ -154,7 +156,7 @@ function render_row(row) {
 		html_row.append($("<td/>").text(
 			renderer(row)
 			//columns[colname].render(row)
-		));
+		).css("width", columns[colname].width));
 	});
     $("#messages").append(html_row);
 }
@@ -164,6 +166,9 @@ function get_data_event(e) {
 }
 
 function get_data(append) {
+	if(!append) {
+		$("#since").val("");
+	}
 	$.getJSON(
 			"/api/messages.json",
 			$("#filters").serialize(),

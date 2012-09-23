@@ -11,12 +11,12 @@
 				<input type="hidden" name="page" id="pageinput" value="1">
 				<input type="hidden" id="pagesinput" value="1">
 				<input type="hidden" name="since" id="since" value="">
-				<table id="headings"></table>
+				<table class="messageview" id="headings"></table>
 			</form>
 		</header>
 
 		<section class="main">
-			<table id="messages">
+			<table class="messageview" id="messages">
 			</table>
 		</section>
 
