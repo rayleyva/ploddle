@@ -1,9 +1,10 @@
 <html>
 	<head>
 		<title>Ploddle!</title>
+		<link rel="stylesheet" type="text/css" href="/static/ploddle.css">
+		<link rel='icon' type='image/x-icon' href='/static/ploddle.ico'>
 		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.1/jquery.min.js"></script>
 		<script src="/static/ploddle.js"></script>
-		<link rel="stylesheet" type="text/css" href="/static/ploddle.css">
 	</head>
 	<body>
 		<header>
