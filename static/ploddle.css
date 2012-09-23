@@ -74,6 +74,7 @@ FOOTER {
 }
 .messageview TR.message TD {
 	border-top: 1px solid gray;
+	min-width: 64px;
 }
 .messageview TR.message:first-child TD {
 	border-top: 0px;
