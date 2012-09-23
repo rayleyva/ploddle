@@ -36,6 +36,8 @@
 			</span>
 			&mdash;
 			<label><input type="checkbox" id="livemode"> Live Mode</label>
+			&mdash;
+			<a href="#" id="showsettings">Settings</a>
 		</footer>
 	</body>
 </html>

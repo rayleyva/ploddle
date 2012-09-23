@@ -254,4 +254,9 @@ $(function() {
 			cancel_live();
 		}
 	});
+
+	$("#showsettings").click(function(e) {
+		$(".settings").show();
+		return false;
+	});
 });

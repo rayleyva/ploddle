@@ -22,6 +22,7 @@ HEADER {
 	right: 0px;
 	background: white;
 	border-bottom: 1px solid black;
+	z-index: 1;
 }
 HEADER FORM {
 	margin-bottom: 0px;
@@ -34,10 +35,19 @@ SECTION.main {
 	left: 0px;
 	right: 0px;
 	overflow-y: scroll;
+	z-index: 0;
 }
 
 SECTION.settings {
 	display: none;
+	position: fixed;
+	top: 60;
+	left: 60;
+	z-index: 2;
+
+	border: 1px solid black;
+	background: white;
+	border-radius: 16px;
 }
 
 FOOTER {
@@ -48,6 +58,7 @@ FOOTER {
 	background: white;
 	border-top: 1px solid black;
 	text-align: center;
+	z-index: 1;
 }
 
 .messageview {
