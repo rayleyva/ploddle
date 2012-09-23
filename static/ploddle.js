@@ -5,7 +5,6 @@ var columns = {
 		init: function() {
 			json_to_select("/api/hosts.json", "#host");
 		},
-		width: "8em",
 	},
 	"timestamp": {
 		name: "Timestamp",
@@ -13,7 +12,6 @@ var columns = {
 		render: function(row) {
 			return row["timestamp"].substring(0, 16);
 		},
-		width: "10em",
 	},
 	"daemon": {
 		name: "Daemon",
@@ -21,12 +19,10 @@ var columns = {
 		init: function() {
 			json_to_select("/api/daemons.json", "#daemon");
 		},
-		width: "12em",
 	},
 	"threadName": {
 		name: "Thread",
 		filter: '<input name="threadName" id="threadName">',
-		width: "12em",
 	},
 	"message": {
 		name: "Message",
@@ -43,7 +39,6 @@ var columns = {
 				return "-";
 			}
 		},
-		width: "18em",
 	},
 	"source2": {
 		name: "Source Code",
@@ -56,7 +51,6 @@ var columns = {
 				return "-";
 			}
 		},
-		width: "18em",
 	},
 	"debug": {
 		name: "Debug Info",
@@ -88,8 +82,8 @@ function render_header() {
 	var titles = $('<tr/>');
 	var filters = $("<tr/>");
 	$(active_columns).each(function(f, colname) {
-		titles.append($("<td/>").text(columns[colname].name).css("width", columns[colname].width));
-		filters.append($("<td/>").html(columns[colname].filter).css("width", columns[colname].width));
+		titles.append($("<td/>").text(columns[colname].name));
+		filters.append($("<td/>").html(columns[colname].filter));
 	});
 
 	$("#headings").empty();
@@ -148,11 +142,18 @@ function render_row(row) {
 		var renderer = columns[colname].render ? columns[colname].render : function(row) {return row[colname]};
 		var rowel = $("<td/>");
 		rowel.text(renderer(row));
-		rowel.css("width", columns[colname].width);
 		rowel.addClass(colname);
 		html_row.append(rowel)
 	});
     $("#messages").append(html_row);
+}
+
+function fix_header_widths() {
+	$("#headings TR:eq(1) TD").each(function(i, el) {
+		$(el).width(
+			$("#messages TR:eq(1) TD:eq("+i+")").width()
+		);
+	});
 }
 
 function get_data_event(e) {
@@ -184,6 +185,8 @@ function get_data(append) {
 		if(append) {
 			$(".main").scrollTop($("#messages").height());
 		}
+
+		fix_header_widths();
 	});
 }
 
