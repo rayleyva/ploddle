@@ -23,27 +23,18 @@ var columns = {
 			json_to_select("/api/daemons.json", "#daemon");
 			$("#daemon").change(get_data_event);
 		},
-		render: function(row) {
-			return row["daemon"];
-		},
 	},
-	"thread": {
+	"threadName": {
 		name: "Thread",
 		filter: '<input name="threadName" id="threadName">',
 		init: function() {
 			$("#threadName").change(get_data_event);
-		},
-		render: function(row) {
-			return row["threadName"];
 		},
 	},
 	"message": {
 		name: "Message",
 		filter: '<input name="message" id="message">',
 		init: function() {
-		},
-		render: function(row) {
-			return row["message"];
 		},
 	},
 	"source1": {
