@@ -24,10 +24,6 @@ var columns = {
 		name: "Thread",
 		filter: '<input name="threadName" id="threadName">',
 	},
-	"message": {
-		name: "Message",
-		filter: '<input name="message" id="message">',
-	},
 	"source1": {
 		name: "Source Function",
 		filter: '<input name="module" id="module">',
@@ -51,6 +47,10 @@ var columns = {
 				return "-";
 			}
 		},
+	},
+	"message": {
+		name: "Message",
+		filter: '<input name="message" id="message">',
 	},
 	"debug": {
 		name: "Debug Info",
