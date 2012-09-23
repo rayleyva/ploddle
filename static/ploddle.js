@@ -4,16 +4,12 @@ var columns = {
 		filter: '<select name="host" id="host"></select>',
 		init: function() {
 			json_to_select("/api/hosts.json", "#host");
-			$("#host").change(get_data_event);
 		},
 		width: "12em",
 	},
 	"timestamp": {
 		name: "Timestamp",
 		filter: '<input name="timestamp" id="timestamp" type="date">',
-		init: function() {
-			$("#timestamp").change(get_data_event);
-		},
 		render: function(row) {
 			return row["timestamp"].substring(0, 16);
 		},
@@ -24,28 +20,20 @@ var columns = {
 		filter: '<select name="daemon" id="daemon"></select>',
 		init: function() {
 			json_to_select("/api/daemons.json", "#daemon");
-			$("#daemon").change(get_data_event);
 		},
 		width: "18em",
 	},
 	"threadName": {
 		name: "Thread",
 		filter: '<input name="threadName" id="threadName">',
-		init: function() {
-			$("#threadName").change(get_data_event);
-		},
 	},
 	"message": {
 		name: "Message",
 		filter: '<input name="message" id="message">',
-		init: function() {
-		},
 	},
 	"source1": {
 		name: "Source Function",
 		filter: '<input name="module" id="module">',
-		init: function() {
-		},
 		render: function(row) {
 			if(row["module"]) {
 				return row["module"]+":"+row["funcName"];
@@ -58,8 +46,6 @@ var columns = {
 	"source2": {
 		name: "Source Code",
 		filter: '<input name="module" id="module">',
-		init: function() {
-		},
 		render: function(row) {
 			if(row["filename"]) {
 				return row["filename"]+":"+row["lineno"];
@@ -72,8 +58,6 @@ var columns = {
 	"debug": {
 		name: "Debug Info",
 		filter: '',
-		init: function() {
-		},
 		render: function(row) {
 			return JSON.stringify(row);
 		},
@@ -110,8 +94,13 @@ function render_header() {
 	$("#headings").append(filters);
 
 	$(active_columns).each(function(f, colname) {
-		columns[colname].init();
+		if(columns[colname].init) {
+			columns[colname].init();
+		}
 	});
+
+	$("#headings INPUT").change(get_data_event);
+	$("#headings SELECT").change(get_data_event);
 
 	$(".main").css("top", $("HEADER").height()+1);
 	$(".main").css("bottom", $("FOOTER").height()+1);
