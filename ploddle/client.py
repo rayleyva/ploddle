@@ -26,12 +26,11 @@ severity_map = [
 ]
 rows = []
 row_format = "%(severity)-1.1s %(host)-15.15s %(daemon)-10.10s %(message)s"
-header_data = {
-    "severity": "S",
-    "host": "Host",
-    "daemon": "Daemon",
-    "message": "Message"
-}
+
+
+class TitleDict:
+    def __getitem__(self, x):
+        return x.title()
 
 
 def handle_row(row):
@@ -45,7 +44,7 @@ def to_width(text):
 
 def render_header():
     print t.normal + t.clear
-    print t.move(0, 0) + t.black_on_white(to_width(row_format % header_data))
+    print t.move(0, 0) + t.black_on_white(to_width(row_format % TitleDict()))
 
 
 def render_rows():
