@@ -96,7 +96,7 @@ class PloddleViewer(threading.Thread):
 
         longpoll = request.GET.get("longpoll", "") == "on"
 
-        page_size = 500
+        page_size = 50
         page = int(request.GET.get("page", 1)) - 1
         #if request.GET.get("message"):
         #    w.append("message ILIKE %s")

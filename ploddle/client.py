@@ -15,8 +15,8 @@ filters = {
 }
 t = Terminal()
 severity_map = [
-    t.black_on_red,
-    t.black_on_red,
+    t.blink_black_on_red,
+    t.blink_black_on_red,
     t.black_on_red,  # critical
     t.red,  # error, fatal
     t.yellow,  # warning
@@ -44,7 +44,7 @@ def to_width(text):
 
 
 def render_header():
-    print t.white_on_black + t.clear
+    print t.normal + t.clear
     print t.move(0, 0) + t.black_on_white(to_width(row_format % header_data))
 
 
@@ -67,8 +67,9 @@ def render():
 
 def get_data():
     r = requests.get("http://localhost:5140/api/messages.json", params=filters)
-    for row in r.json["messages"]:
-        handle_row(row)
+    if r.json:
+        for row in r.json["messages"]:
+            handle_row(row)
 
 
 def main(args):
