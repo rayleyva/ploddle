@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 
 from logging.handlers import SysLogHandler
 import logging

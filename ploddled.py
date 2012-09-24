@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 
 from wsgiref.simple_server import make_server
 from pyramid.config import Configurator
