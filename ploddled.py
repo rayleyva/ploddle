@@ -176,9 +176,12 @@ class PloddleCollector(threading.Thread):
             }
 
             if message.startswith("ploddle:json:"):
-                _ploddle, _json, data = message.split(":", 2)
-                logging.debug("Found json data: "+data)
-                doc.update(json.loads(data[:-1]))
+                try:
+                    _ploddle, _json, data = message.split(":", 2)
+                    logging.debug("Found json data: "+data)
+                    doc.update(json.loads(data[:-1]))
+                except Exception:
+                    pass  # message will be logged as a normal message
             elif pattern_std.match(message):
                 match_std = pattern_std.match(message)
                 doc["daemon"] = match_std.group(1)
