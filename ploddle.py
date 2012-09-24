@@ -38,6 +38,8 @@ class PloddleFormatter(logging.Formatter):
             d[a] = getattr(record, a)
         d["daemon"] = self.daemonName
         d["message"] = record.msg % record.args
+        if d["exc_info"]:
+            d["exc_info"] = str(d["exc_info"])
 
         return "ploddle:json:"+json.dumps(d)
 
