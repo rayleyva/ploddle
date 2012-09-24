@@ -4,6 +4,7 @@ from logging.handlers import SysLogHandler
 import logging
 import sys
 import json
+import os
 
 
 class PloddleFormatter(logging.Formatter):
@@ -47,7 +48,7 @@ class PloddleFormatter(logging.Formatter):
 class PloddleHandler(SysLogHandler):
     def __init__(self, addr='localhost', port=5141, daemonName=None):
         if not daemonName:
-            daemonName = sys.argv[0]
+            daemonName = os.path.basename(sys.argv[0])
         logging.handlers.SysLogHandler.__init__(self, address=(addr, port))
         self.setFormatter(PloddleFormatter(daemonName))
 

@@ -20,19 +20,13 @@ var columns = {
 		filter: '<select name="host" id="host"></select>',
 		init: function() {
 			json_to_select("/api/hosts.json", "#host");
-			$("#host").change(get_data);
-		},
-		render: function(row) {
-			return row["host"];
 		},
 	},
 	"timestamp": {
 		name: "Timestamp",
 		filter: '<input name="timestamp" id="timestamp" type="date">',
-		init: function() {
-		},
 		render: function(row) {
-			return row["timestamp"];
+			return row["timestamp"].substring(0, 16);
 		},
 	},
 	"daemon": {
@@ -40,63 +34,47 @@ var columns = {
 		filter: '<select name="daemon" id="daemon"></select>',
 		init: function() {
 			json_to_select("/api/daemons.json", "#daemon");
-			$("#daemon").change(get_data);
-		},
-		render: function(row) {
-			return row["daemon"];
 		},
 	},
-	"thread": {
+	"threadName": {
 		name: "Thread",
 		filter: '<input name="threadName" id="threadName">',
-		init: function() {
-			$("#threadName").change(get_data);
-		},
-		render: function(row) {
-			return row["threadName"];
-		},
 	},
 	"name": {
 		name: "Logger Name",
 		filter: '<input name="name" id="name">',
-		init: function() {
-		},
-		render: function(row) {
-			return row["name"];
-		},
-	},
-	"message": {
-		name: "Message",
-		filter: '<input name="message" id="message">',
-		init: function() {
-		},
-		render: function(row) {
-			return row["message"];
-		},
 	},
 	"source1": {
 		name: "Source Function",
 		filter: '<input name="module" id="module">',
-		init: function() {
-		},
 		render: function(row) {
-			return row["module"]+":"+row["funcName"];
+			if(row["module"]) {
+				return row["module"]+":"+row["funcName"];
+			}
+			else {
+				return "-";
+			}
 		},
 	},
 	"source2": {
 		name: "Source Code",
 		filter: '<input name="module" id="module">',
-		init: function() {
-		},
 		render: function(row) {
-			return row["filename"]+":"+row["lineno"];
+			if(row["filename"]) {
+				return row["filename"]+":"+row["lineno"];
+			}
+			else {
+				return "-";
+			}
 		},
+	},
+	"message": {
+		name: "Message",
+		filter: '<input name="message" id="message">',
 	},
 	"debug": {
 		name: "Debug Info",
 		filter: '',
-		init: function() {
-		},
 		render: function(row) {
 			return JSON.stringify(row);
 		},
@@ -108,7 +86,6 @@ var active_columns = [
 	"timestamp",
 	"daemon",
 	"message",
-	"source2",
 ];
 
 function json_to_select(url, select) {
@@ -134,8 +111,16 @@ function render_header() {
 	$("#headings").append(filters);
 
 	$(active_columns).each(function(f, colname) {
-		columns[colname].init();
+		if(columns[colname].init) {
+			columns[colname].init();
+		}
 	});
+
+	$("#headings INPUT").change(get_data_event);
+	$("#headings SELECT").change(get_data_event);
+
+	$(".main").css("top", $("HEADER").height()+1);
+	$(".main").css("bottom", $("FOOTER").height()+1);
 }
 
 function render_colsel() {
@@ -159,34 +144,135 @@ function render_colsel() {
 	});
 }
 
+function is_live() {
+	return $("#livemode").is(":checked");
+}
+
+function render_paginator(p, ps) {
+	$("#page").text(p);
+	$("#pages").text(ps);
+}
+
 function render_row(row) {
-	var html_row = $("<tr/>");
+	var html_row = $("<tr class='message' />");
 	if(row["severity"]) {
 		html_row.addClass("severity-"+row["severity"]);
 	}
 	$(active_columns).each(function(f, colname) {
-		html_row.append($("<td/>").text(
-			columns[colname].render(row)
-		));
+		var renderer = columns[colname].render ? columns[colname].render : function(row) {return row[colname]};
+		var rowel = $("<td/>");
+		rowel.text(renderer(row));
+		rowel.addClass(colname);
+		html_row.append(rowel)
 	});
-    $("#messages").prepend(html_row);
+    $("#messages").append(html_row);
 }
 
-function get_data() {
+function fix_header_widths() {
+	$("#headings TR:eq(1) TD").each(function(i, el) {
+		$(el).width(
+			$("#messages TR:eq(1) TD:eq("+i+")").width()
+		);
+	});
+}
+
+function get_data_event(e) {
+	get_data();
+}
+
+function get_data(append) {
+	if(!append) {
+		$("#since").val("");
+	}
 	$.getJSON(
 			"/api/messages.json",
 			$("#filters").serialize(),
 			function(response)
 	{
-		$("#messages").empty();
+		render_paginator(response.page, response.pages);
+		$("#pageinput").val(response.page);
+		$("#pagesinput").val(response.pages);
+
+		if(!append) {
+			$("#messages").empty();
+		}
     	for (var i = 0; i < response.messages.length; i++) {
 			render_row(response.messages[i]);
+			if(is_live()) {
+				$("#since").val(response.messages[i].timestamp);
+			}
     	}
+		if(append) {
+			$(".main").scrollTop($("#messages").height());
+		}
+
+		fix_header_widths();
 	});
+}
+
+function go_to_page(page) {
+	if(page >= 1 && page <= parseInt($("#pagesinput").val())) {
+		$("#pageinput").val(page);
+		get_data();
+	}
+}
+function go_to_relpage(relpage) {
+	go_to_page(parseInt($("#pageinput").val()) + relpage);
+}
+
+var live_timer = false;
+function start_live() {
+	$("#pageinput").val(-1);
+	get_data();
+	live_timer = setInterval(function() {
+		get_data(true);
+	}, 1000);
+	$("#paginator").hide();
+}
+function cancel_live() {
+	if(live_timer) {
+		clearInterval(live_timer);
+	}
+	$("#pageinput").val(1);
+	$("#since").val("");
+	get_data();
+	$("#paginator").show();
 }
 
 $(function() {
 	render_colsel();
 	render_header();
+	render_paginator(1, 1);
 	get_data();
+
+	$("#firstpage").click(function(e) {
+		go_to_page(1);
+		return false;
+	});
+	$("#prevpage").click(function(e) {
+		go_to_relpage(-1);
+		return false;
+	});
+	$("#nextpage").click(function(e) {
+		go_to_relpage(1);
+		return false;
+	});
+	$("#lastpage").click(function(e) {
+		go_to_page(parseInt($("#pagesinput").val()));
+		return false;
+	});
+
+	$("#livemode").click(function(e) {
+		if(is_live()) {
+			start_live();
+		}
+		else {
+			cancel_live();
+		}
+	});
+
+	$("#showsettings").click(function(e) {
+		$(".settings").show();
+		return false;
+	});
 });

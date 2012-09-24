@@ -2,7 +2,7 @@
 
 from wsgiref.simple_server import make_server
 from pyramid.config import Configurator
-from pymongo import Connection
+from pymongo import Connection, DESCENDING
 
 from ConfigParser import SafeConfigParser
 import logging
@@ -77,7 +77,10 @@ class PloddleViewer(threading.Thread):
         config.add_view(self.api_daemons, route_name='api_daemons', renderer='json')
 
         self.database = get_database(config_file)
-        self.server = make_server('0.0.0.0', 5140, config.make_wsgi_app())
+
+        host = config_file.get("viewer", "host")
+        port = config_file.getint("viewer", "port")
+        self.server = make_server(host, port, config.make_wsgi_app())
 
     def index(self, request):
         return dict()
@@ -88,8 +91,19 @@ class PloddleViewer(threading.Thread):
         filters = {}
         if request.GET.get("host"):
             filters["host"] = request.GET.get("host")
+        if request.GET.get("timestamp"):
+            date = datetime.datetime.strptime(request.GET.get("timestamp"), "%Y-%m-%d")
+            print date
+            filters["timestamp"] = {
+                "$gte": date,
+                "$lt": date + datetime.timedelta(days=1)
+            }
         if request.GET.get("daemon"):
             filters["daemon"] = request.GET.get("daemon")
+        if request.GET.get("since"):
+            filters["timestamp"] = {
+                "$gt": datetime.datetime.strptime(request.GET.get("since"), "%Y-%m-%d %H:%M:%S.%f")
+            }
         if request.GET.get("severity"):
             filters["severity"] = {"$lte": int(request.GET.get("severity"))}
 
@@ -99,8 +113,13 @@ class PloddleViewer(threading.Thread):
         #    w.append("message ILIKE %s")
         #    p.append("%"+request.GET.get("message")+"%")
 
-        raw_messages = list(coll.find(filters).sort("timestamp").skip(page*page_size).limit(page_size))
-        pages = coll.find(filters).count() / page_size
+        if page >= 0:
+            raw_messages = list(coll.find(filters).sort("timestamp").skip(page*page_size).limit(page_size))
+            pages = coll.find(filters).count() / page_size
+        else:
+            raw_messages = list(coll.find(filters).sort("timestamp", DESCENDING).limit(page_size))
+            raw_messages.reverse()
+            pages = -1
 
         safe_messages = []
         for m in raw_messages:
@@ -109,13 +128,13 @@ class PloddleViewer(threading.Thread):
                 if f[0] == "_":
                     pass
                 elif f == "timestamp":
-                    doc[f] = str(m[f])[:16]
+                    doc[f] = str(m[f])
                 else:
                     doc[f] = m[f]
             safe_messages.append(doc)
         return {
-            "page": page,
-            "pages": pages,
+            "page": page + 1,
+            "pages": pages + 1,
             "messages": safe_messages,
         }
 

@@ -1,12 +1,12 @@
-H1 {
-	text-align: center;
-}
-TD {
-	font-family: monospace;
-	font-size: 10px;
+BODY {
+	background: url(/static/ploddle.png);
+	background-size: contain;
+	background-attachment: fixed;
+	background-repeat: no-repeat;
+	background-position: center;
 }
 
-#columns {
+#controls {
 	position: fixed;
 	top: 64px;
 	right: 0px;
@@ -15,6 +15,78 @@ TD {
 	border-right: none;
 	background: white;
 	border-radius: 16px 0px 0px 16px;
+}
+
+HEADER {
+	position: fixed;
+	top: 0px;
+	left: 0px;
+	right: 0px;
+	background: white;
+	border-bottom: 1px solid black;
+	z-index: 1;
+}
+HEADER FORM {
+	margin-bottom: 0px;
+}
+
+SECTION.main {
+	position: fixed;
+	top: 0px;     /* will be corrected by JS */
+	bottom: 0px;  /* as above */
+	left: 0px;
+	right: 0px;
+	overflow-y: scroll;
+	z-index: 0;
+}
+
+SECTION.settings {
+	display: none;
+	position: fixed;
+	top: 60;
+	left: 60;
+	z-index: 2;
+
+	border: 1px solid black;
+	background: white;
+	border-radius: 16px;
+}
+
+FOOTER {
+	position: fixed;
+	bottom: 0px;
+	left: 0px;
+	right: 0px;
+	background: white;
+	border-top: 1px solid black;
+	text-align: center;
+	z-index: 1;
+}
+
+.messageview {
+	border-collapse: collapse;
+	width: 100%;
+	font-family: monospace;
+	font-size: 10px;
+}
+.messageview TR TD {
+	padding: 2px 6px;
+}
+.messageview TR.message TD {
+	border-top: 1px solid gray;
+	min-width: 64px;
+}
+.messageview TR.message:first-child TD {
+	border-top: 0px;
+}
+.messageview SELECT, .messageview INPUT {
+	width: 100%;
+}
+
+TD.host, TD.timestamp, TD.daemon {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 
 .severity-0 {color: black;  background-color: #F44;}
