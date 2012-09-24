@@ -5,17 +5,11 @@ BODY {
 	background-repeat: no-repeat;
 	background-position: center;
 }
-
-#controls {
-	position: fixed;
-	top: 64px;
-	right: 0px;
-	padding-right: 16px;
-	border: 1px solid black;
-	border-right: none;
-	background: white;
-	border-radius: 16px 0px 0px 16px;
+FORM {
+	margin-bottom: 0px;
 }
+
+
 
 HEADER {
 	position: fixed;
@@ -25,9 +19,6 @@ HEADER {
 	background: white;
 	border-bottom: 1px solid black;
 	z-index: 1;
-}
-HEADER FORM {
-	margin-bottom: 0px;
 }
 
 SECTION.main {
@@ -50,6 +41,14 @@ SECTION.settings {
 	border: 1px solid black;
 	background: white;
 	border-radius: 16px;
+	padding: 8px;
+}
+#columns UL {
+	list-style: none;
+	padding: 0px;
+	margin: 0px;
+}
+#columns LI {
 }
 
 FOOTER {
