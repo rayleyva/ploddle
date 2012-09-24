@@ -25,11 +25,13 @@ severity_map = [
     t.white  # debug
 ]
 rows = []
-active_columns = [
-    "host",
-    "daemon",
-    "message",
-]
+row_format = "%(severity)-1.1s %(host)-15.15s %(daemon)-10.10s %(message)s"
+header_data = {
+    "severity": "S",
+    "host": "Host",
+    "daemon": "Daemon",
+    "message": "Message"
+}
 
 
 def handle_row(row):
@@ -40,15 +42,16 @@ def handle_row(row):
 def to_width(text):
     return (text + " "*t.width)[:t.width]
 
+
 def render_header():
     print t.white_on_black + t.clear
-    print t.move(0, 0) + t.black_on_white(to_width("%s %-15s %-10.10s %s" % ("S", "Host", "Daemon", "Message")))
+    print t.move(0, 0) + t.black_on_white(to_width(row_format % header_data))
 
 
 def render_rows():
     visible = rows[-t.height+1:-1]
     for n, r in enumerate(visible):
-        text = to_width("%d %-15s %-10.10s %s" % (r["severity"], r["host"], r["daemon"], r["message"]))
+        text = to_width(row_format % r)
         print t.move(n+1, 0) + severity_map[r["severity"]](text)
 
 
