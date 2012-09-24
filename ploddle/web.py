@@ -94,7 +94,7 @@ class PloddleViewer(threading.Thread):
         if request.GET.get("severity"):
             filters["severity"] = {"$lte": int(request.GET.get("severity"))}
 
-        longpoll = request.GET.get("longpoll", "") == "on"
+        longpoll = False  # request.GET.get("longpoll", "") == "on"
 
         page_size = 50
         page = int(request.GET.get("page", 1)) - 1
