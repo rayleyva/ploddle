@@ -33,8 +33,19 @@ class TitleDict:
         return x.title()
 
 
+class RowDict:
+    def __init__(self, row):
+        self.row = row
+
+    def __getitem__(self, x):
+        if x in self.row:
+            return self.row[x]
+        else:
+            return "-"
+
+
 def handle_row(row):
-    rows.append(row)
+    rows.append(RowDict(row))
     filters["since"] = row["timestamp"]
 
 
