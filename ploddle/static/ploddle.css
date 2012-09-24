@@ -96,3 +96,13 @@ TD.host, TD.timestamp, TD.daemon {
 .severity-5 {color: black;  background-color: #EE2;}
 .severity-6 {color: black;  background-color: #8F8;} /* info */
 .severity-7 {color: grey;   background-color: #DFD;} /* debug */
+/*
+.severity-0:nth-child(odd) {background-color: #E33;}
+.severity-1:nth-child(odd) {background-color: #E33;}
+.severity-2:nth-child(odd) {background-color: #E33;}
+.severity-3:nth-child(odd) {background-color: #E77;}
+.severity-4:nth-child(odd) {background-color: #DD1;}
+.severity-5:nth-child(odd) {background-color: #DD1;}
+.severity-6:nth-child(odd) {background-color: #7E7;}
+.severity-7:nth-child(odd) {background-color: #CEC;}
+*/

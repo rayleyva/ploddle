@@ -11,13 +11,10 @@ import re
 import threading
 import json
 import datetime
+import os
 from pprint import pformat
 from socket import *
 
-
-#######################################################################
-# The daemon part
-#######################################################################
 
 def get_logger(config):
     try:
@@ -43,18 +40,6 @@ def get_database(config):
         return db
     except Exception:
         logging.exception("Failed to connect to database:")
-
-
-def get_socket(config):
-    try:
-        host = config.get("bind", "host")
-        port = config.getint("bind", "port")
-        sock = socket(AF_INET, SOCK_DGRAM)
-        sock.bind((host, port))
-        logging.info("Successfully bound collector to port %s:%d" % (host, port))
-        return sock
-    except Exception:
-        logging.exception("Error binding to socket:")
 
 
 class PloddleViewer(threading.Thread):
@@ -152,81 +137,20 @@ class PloddleViewer(threading.Thread):
         self.server.serve_forever()
 
 
-class PloddleCollector(threading.Thread):
-    def __init__(self, config, database):
-        threading.Thread.__init__(self, name="Collector")
-
-        self.socket = get_socket(config)
-        self.database = database
-
-    def run(self):
-        logging.info("Running collector")
-        pattern_std = re.compile("([^:\[]+)(?:\[\d+\])?: (.*)")
-        coll = self.database.entries
-
-        while True:
-            data, (host, _port) = self.socket.recvfrom(1024)
-            logging.debug("Got packet: %s" % data)
-
-            try:
-                angle = data.index(">")
-                priority = int(data[1:angle])
-                therest  = data[angle+1:]
-
-                # some syslog daemons send RFC3164 compliant headers,
-                # some only send priority and message
-                if therest.split()[0] in ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]:
-                    (_month, _day, _timestamp, _hostname, message) = therest.split(" ", 4)
-                else:
-                    message = therest
-
-                priority = int(priority)
-                severity = priority & 0x07
-                facility = priority >> 3
-            except Exception:
-                logging.exception("Error parsing packet from %s: %s " % (str(host), str(data)))
-                continue
-
-            doc = {
-                "host": host,
-                "severity": severity,
-                "facility": facility,
-                "message": message,
-                "timestamp": datetime.datetime.utcnow(),
-            }
-
-            if message.startswith("ploddle:json:"):
-                try:
-                    _ploddle, _json, data = message.split(":", 2)
-                    logging.debug("Found json data: "+data)
-                    doc.update(json.loads(data[:-1]))
-                except Exception:
-                    pass  # message will be logged as a normal message
-            elif pattern_std.match(message):
-                match_std = pattern_std.match(message)
-                doc["daemon"] = match_std.group(1)
-                doc["message"] = match_std.group(2)
-
-            logging.debug("inserting: "+pformat(doc))
-            coll.insert(doc)
-
-
 def main(args):
-    config = SafeConfigParser()
-    config.read("ploddled.conf")
+    try:
+        config = SafeConfigParser()
+        if os.path.exists("ploddled.conf"):
+            config.read("ploddled.conf")
 
-    logger = get_logger(config)
-    database = get_database(config)
+        logger = get_logger(config)
+        database = get_database(config)
 
-    if logger and database:
-        viewer = PloddleViewer(config, database)
-        viewer.daemon = True
-    
-        collector = PloddleCollector(config, database)
-        collector.daemon = True
-        
-        viewer.start()
-        collector.run()
+        if logger and database:
+            PloddleViewer(config, database).run()
+    except KeyboardInterrupt:
+        pass
+
 
 if __name__ == '__main__':
     sys.exit(main(sys.argv))
