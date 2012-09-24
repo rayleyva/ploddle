@@ -12,6 +12,7 @@ import threading
 import json
 import datetime
 import os
+import time
 from pprint import pformat
 from socket import *
 
@@ -93,19 +94,28 @@ class PloddleViewer(threading.Thread):
         if request.GET.get("severity"):
             filters["severity"] = {"$lte": int(request.GET.get("severity"))}
 
+        longpoll = request.GET.get("longpoll", "") == "on"
+
         page_size = 500
         page = int(request.GET.get("page", 1)) - 1
         #if request.GET.get("message"):
         #    w.append("message ILIKE %s")
         #    p.append("%"+request.GET.get("message")+"%")
 
-        if page >= 0:
-            raw_messages = list(coll.find(filters).sort("timestamp").skip(page*page_size).limit(page_size))
-            pages = coll.find(filters).count() / page_size
-        else:
-            raw_messages = list(coll.find(filters).sort("timestamp", DESCENDING).limit(page_size))
-            raw_messages.reverse()
-            pages = -1
+        raw_messages = []
+        for n in range(0, 10):
+            if page >= 0:
+                raw_messages = list(coll.find(filters).sort("timestamp").skip(page*page_size).limit(page_size))
+                pages = coll.find(filters).count() / page_size
+            else:
+                raw_messages = list(coll.find(filters).sort("timestamp", DESCENDING).limit(page_size))
+                raw_messages.reverse()
+                pages = -1
+
+            if longpoll and not raw_messages:
+                time.sleep(1)
+            else:
+                break
 
         safe_messages = []
         for m in raw_messages:
