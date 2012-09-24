@@ -272,7 +272,7 @@ $(function() {
 	});
 
 	$("#showsettings").click(function(e) {
-		$(".settings").show();
+		$(".settings").toggle();
 		return false;
 	});
 });
