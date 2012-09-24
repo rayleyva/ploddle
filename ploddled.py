@@ -51,16 +51,18 @@ def get_socket(config):
         port = config.getint("bind", "port")
         sock = socket(AF_INET, SOCK_DGRAM)
         sock.bind((host, port))
-        logging.info("Successfully bound to port %s:%d" % (host, port))
+        logging.info("Successfully bound collector to port %s:%d" % (host, port))
         return sock
     except Exception:
         logging.exception("Error binding to socket:")
 
 
 class PloddleViewer(threading.Thread):
-    def __init__(self, config_file):
+    def __init__(self, config_file, database):
         threading.Thread.__init__(self, name="Viewer")
 
+        self.database = database
+        
         config = Configurator()
         config.add_static_view(name='static', path='static/')
 
@@ -76,11 +78,10 @@ class PloddleViewer(threading.Thread):
         config.add_route('api_daemons', '/api/daemons.json')
         config.add_view(self.api_daemons, route_name='api_daemons', renderer='json')
 
-        self.database = get_database(config_file)
-
         host = config_file.get("viewer", "host")
         port = config_file.getint("viewer", "port")
         self.server = make_server(host, port, config.make_wsgi_app())
+        logging.info("Successfully bound viewer to port %s:%d" % (host, port))
 
     def index(self, request):
         return dict()
@@ -152,11 +153,11 @@ class PloddleViewer(threading.Thread):
 
 
 class PloddleCollector(threading.Thread):
-    def __init__(self, config):
+    def __init__(self, config, database):
         threading.Thread.__init__(self, name="Collector")
 
         self.socket = get_socket(config)
-        self.database = get_database(config)
+        self.database = database
 
     def run(self):
         logging.info("Running collector")
@@ -214,15 +215,18 @@ def main(args):
     config = SafeConfigParser()
     config.read("ploddled.conf")
 
-    get_logger(config)
+    logger = get_logger(config)
+    database = get_database(config)
 
-    viewer = PloddleViewer(config)
-    viewer.daemon = True
-    viewer.start()
-
-    collector = PloddleCollector(config)
-    collector.daemon = True
-    collector.run()
+    if logger and database:
+        viewer = PloddleViewer(config, database)
+        viewer.daemon = True
+    
+        collector = PloddleCollector(config, database)
+        collector.daemon = True
+        
+        viewer.start()
+        collector.run()
 
 if __name__ == '__main__':
     sys.exit(main(sys.argv))
