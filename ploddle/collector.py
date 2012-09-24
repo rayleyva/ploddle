@@ -34,6 +34,7 @@ def get_database(config):
         database = config.get("database", "database")
         conn = Connection(hostname, 27017)
         db = conn[database]
+        db.entries.ensure_index("timestamp")
         logging.info("Connected to database")
         return db
     except Exception:
