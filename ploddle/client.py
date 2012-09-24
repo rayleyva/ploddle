@@ -69,14 +69,17 @@ def get_data():
     if r.json:
         for row in r.json["messages"]:
             handle_row(row)
+        if r.json["messages"]:
+            return True
+    return False
 
 
 def main(args):
     try:
         with t.fullscreen():
             while True:
-                get_data()
-                render()
+                if get_data():
+                    render()
                 time.sleep(1)
     except KeyboardInterrupt:
         pass
