@@ -56,6 +56,15 @@ var columns = {
 			return row["threadName"];
 		},
 	},
+	"name": {
+		name: "Logger Name",
+		filter: '<input name="name" id="name">',
+		init: function() {
+		},
+		render: function(row) {
+			return row["name"];
+		},
+	},
 	"message": {
 		name: "Message",
 		filter: '<input name="message" id="message">',
