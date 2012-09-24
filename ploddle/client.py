@@ -15,20 +15,20 @@ filters = {
 }
 t = Terminal()
 severity_map = [
-    t.red,
-    t.red,
-    t.red,  # critical
-    t.orange,  # error, fatal
+    t.black_on_red,
+    t.black_on_red,
+    t.black_on_red,  # critical
+    t.red,  # error, fatal
     t.yellow,  # warning
-    t.green,
+    t.cyan,
     t.green,  # info
-    t.grey  # debug
+    t.white  # debug
 ]
 rows = []
 active_columns = [
-    ("host"),
-    ("daemon"),
-    ("message"),
+    "host",
+    "daemon",
+    "message",
 ]
 
 
@@ -37,15 +37,19 @@ def handle_row(row):
     filters["since"] = row["timestamp"]
 
 
+def to_width(text):
+    return (text + " "*t.width)[:t.width]
+
 def render_header():
-    print t.clear() + t.move(0, 0) + t.bold_white("%s %-15s %-10.10s %s" % ("S", "Host", "Daemon", "Message"))
+    print t.white_on_black + t.clear
+    print t.move(0, 0) + t.black_on_white(to_width("%s %-15s %-10.10s %s" % ("S", "Host", "Daemon", "Message")))
 
 
 def render_rows():
     visible = rows[-t.height+1:-1]
     for n, r in enumerate(visible):
-        text = "%d %-15s %-10.10s %s" % (r["severity"], r["host"], r["daemon"], r["message"])
-        print t.move(n+1, 0) + severity_map[r["severity"]] + text[0:t.width]
+        text = to_width("%d %-15s %-10.10s %s" % (r["severity"], r["host"], r["daemon"], r["message"]))
+        print t.move(n+1, 0) + severity_map[r["severity"]](text)
 
 
 def render_input():
