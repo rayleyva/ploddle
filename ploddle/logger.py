@@ -51,16 +51,3 @@ class PloddleHandler(SysLogHandler):
             daemonName = os.path.basename(sys.argv[0])
         logging.handlers.SysLogHandler.__init__(self, address=(addr, port))
         self.setFormatter(PloddleFormatter(daemonName))
-
-
-if __name__ == "__main__":
-    my_logger = logging.getLogger('ploddle.demo')
-    my_logger.setLevel(logging.DEBUG)
-    my_logger.addHandler(PloddleHandler())
-
-    my_logger.debug('this is debug')
-    my_logger.info('this is info')
-    my_logger.warning('this is a warning')
-    my_logger.error("Error message")
-    my_logger.critical('this is critical')
-    my_logger.error("Fatal!")
