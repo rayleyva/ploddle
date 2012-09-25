@@ -106,7 +106,7 @@ class PloddleCollector(threading.Thread):
             elif pattern_std.match(message):
                 match_std = pattern_std.match(message)
                 doc["daemon"] = match_std.group(1)
-                doc["message"] = match_std.group(2)
+                doc["message"] = match_std.group(2).strip()
 
             logging.debug("inserting: "+pformat(doc))
             coll.insert(doc)
