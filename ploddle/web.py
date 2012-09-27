@@ -7,14 +7,9 @@ from pymongo import Connection, DESCENDING
 from ConfigParser import SafeConfigParser
 import logging
 import sys
-import re
 import threading
-import json
 import datetime
-import os
 import time
-from pprint import pformat
-from socket import *
 
 
 def get_logger(config):
@@ -108,7 +103,7 @@ class PloddleViewer(threading.Thread):
         #    p.append("%"+request.GET.get("message")+"%")
 
         raw_messages = []
-        for n in range(0, 10):
+        for _ in range(0, 10):
             if page >= 0:
                 raw_messages = list(coll.find(filters).sort("timestamp").skip(page*page_size).limit(page_size))
                 pages = coll.find(filters).count() / page_size
