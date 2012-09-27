@@ -79,18 +79,23 @@ class PloddleViewer(threading.Thread):
         if request.GET.get("host"):
             filters["host"] = request.GET.get("host")
         if request.GET.get("timestamp"):
-            date = datetime.datetime.strptime(request.GET.get("timestamp"), "%Y-%m-%d")
-            print date
-            filters["timestamp"] = {
-                "$gte": date,
-                "$lt": date + datetime.timedelta(days=1)
-            }
+            try:
+                date = datetime.datetime.strptime(request.GET.get("timestamp"), "%Y-%m-%d")
+                filters["timestamp"] = {
+                    "$gte": date,
+                    "$lt": date + datetime.timedelta(days=1)
+                }
+            except ValueError:
+                pass
         if request.GET.get("daemon"):
             filters["daemon"] = request.GET.get("daemon")
         if request.GET.get("since"):
-            filters["timestamp"] = {
-                "$gt": datetime.datetime.strptime(request.GET.get("since"), "%Y-%m-%d %H:%M:%S.%f")
-            }
+            try:
+                filters["timestamp"] = {
+                    "$gt": datetime.datetime.strptime(request.GET.get("since"), "%Y-%m-%d %H:%M:%S.%f")
+                }
+            except ValueError:
+                pass
         if request.GET.get("severity"):
             filters["severity"] = {"$lte": int(request.GET.get("severity"))}
 
