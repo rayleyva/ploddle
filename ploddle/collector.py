@@ -53,6 +53,32 @@ def get_socket(config):
         logging.exception("Error binding to socket:")
 
 
+def get_hostname(host):
+    if host == "127.0.0.1":
+        return "localhost"
+    else:
+        return host
+
+
+def parse_syslog_packet(data):
+    angle = data.index(">")
+    priority = int(data[1:angle])
+    therest  = data[angle+1:]
+
+    # some syslog daemons send RFC3164 compliant headers,
+    # some only send priority and message
+    if therest.split()[0] in ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]:
+        (_month, _day, _timestamp, _hostname, message) = therest.split(" ", 4)
+    else:
+        message = therest
+
+    priority = int(priority)
+    severity = priority & 0x07
+    facility = priority >> 3
+    
+    return (severity, facility, message)
+
+
 class PloddleCollector(threading.Thread):
     def __init__(self, config, database):
         threading.Thread.__init__(self, name="Collector")
@@ -70,20 +96,7 @@ class PloddleCollector(threading.Thread):
             logging.debug("Got packet: %s" % data)
 
             try:
-                angle = data.index(">")
-                priority = int(data[1:angle])
-                therest  = data[angle+1:]
-
-                # some syslog daemons send RFC3164 compliant headers,
-                # some only send priority and message
-                if therest.split()[0] in ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]:
-                    (_month, _day, _timestamp, _hostname, message) = therest.split(" ", 4)
-                else:
-                    message = therest
-
-                priority = int(priority)
-                severity = priority & 0x07
-                facility = priority >> 3
+                (severity, facility, message) = parse_syslog_packet(data)
             except Exception:
                 logging.exception("Error parsing packet from %s: %s " % (str(host), str(data)))
                 continue
@@ -107,6 +120,9 @@ class PloddleCollector(threading.Thread):
                 match_std = pattern_std.match(message)
                 doc["daemon"] = match_std.group(1)
                 doc["message"] = match_std.group(2).strip()
+            
+            if "hostname" not in doc:
+                doc["hostname"] = get_hostname(host)
 
             logging.debug("inserting: "+pformat(doc))
             coll.insert(doc)
