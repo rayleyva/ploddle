@@ -5,11 +5,13 @@ import logging
 import sys
 import json
 import os
+import platform
 
 
 class PloddleFormatter(logging.Formatter):
-    def __init__(self, daemonName):
+    def __init__(self, hostname=None, daemonName=None):
         logging.Formatter.__init__(self)
+        self.hostname = hostname
         self.daemonName = daemonName
 
     def format(self, record):
@@ -37,6 +39,7 @@ class PloddleFormatter(logging.Formatter):
         d = {}
         for a in attrs:
             d[a] = getattr(record, a)
+        d["hostname"] = self.hostname
         d["daemon"] = self.daemonName
         d["message"] = record.msg % record.args
         if d["exc_info"]:
@@ -46,8 +49,10 @@ class PloddleFormatter(logging.Formatter):
 
 
 class PloddleHandler(SysLogHandler):
-    def __init__(self, addr='localhost', port=5141, daemonName=None):
+    def __init__(self, addr='localhost', port=5141, hostname=None, daemonName=None):
+        if not hostname:
+            hostname = platform.node()
         if not daemonName:
             daemonName = os.path.basename(sys.argv[0])
         logging.handlers.SysLogHandler.__init__(self, address=(addr, port))
-        self.setFormatter(PloddleFormatter(daemonName))
+        self.setFormatter(PloddleFormatter(hostname, daemonName))
