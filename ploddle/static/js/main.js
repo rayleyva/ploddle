@@ -1,6 +1,17 @@
-var columns = {
-	"severity": {
-		title: "Sev.",
+function json_to_select(url, select) {
+	$.getJSON(url, {}, function(data) {
+    	$(select).empty();
+		$(select).append($('<option value="">All</option>'));
+		$(data).each(function(i, val) {
+			$(select).append($('<option value="'+val+'">'+val+'</option>'));
+    	});
+	});
+}
+
+var columns = [
+	{
+		name: "severity",
+		title: "Severity",
 		filter_html: '<select title="severity" id="severity">'+
 			'<option value="2">Crit</option>'+
 			'<option value="3">Error</option>'+
@@ -8,43 +19,46 @@ var columns = {
 			'<option value="6">Info</option>'+
 			'<option value="7" selected>Debug</option>'+
 		'</select>',
-		init: function() {
-			$("#severity").change(get_data);
-		},
 		render: function(row) {
 			return row["severity"];
 		},
 	},
-	"host": {
+	{
+		name: "host",
 		title: "Host",
 		filter_html: '<select title="host" id="host"></select>',
 		init: function() {
 			json_to_select("/api/hosts.json", "#host");
 		},
 	},
-	"timestamp": {
+	{
+		name: "timestamp",
 		title: "Timestamp",
 		filter_html: '<input title="timestamp" id="timestamp" type="date">',
 		render: function(row) {
 			return row["timestamp"].substring(0, 16);
 		},
 	},
-	"daemon": {
+	{
+		name: "daemon",
 		title: "Daemon",
 		filter_html: '<select title="daemon" id="daemon"></select>',
 		init: function() {
 			json_to_select("/api/daemons.json", "#daemon");
 		},
 	},
-	"threadName": {
+	{
+		name: "threadName",
 		title: "Thread",
 		filter_html: '<input title="threadName" id="threadName">',
 	},
-	"title": {
+	{
+		name: "title",
 		title: "Logger Name",
 		filter_html: '<input title="name" id="name">',
 	},
-	"source1": {
+	{
+		name: "source1",
 		title: "Source Function",
 		filter_html: '<input title="module" id="module">',
 		render: function(row) {
@@ -56,7 +70,8 @@ var columns = {
 			}
 		},
 	},
-	"source2": {
+	{
+		name: "source2",
 		title: "Source Code",
 		filter_html: '<input title="module" id="module">',
 		render: function(row) {
@@ -68,35 +83,25 @@ var columns = {
 			}
 		},
 	},
-	"message": {
+	{
+		name: "message",
 		title: "Message",
 		filter_html: '<input title="message" id="message">',
 	},
-	"debug": {
+	{
+		name: "debug",
 		title: "Debug Info",
 		filter_html: '',
 		render: function(row) {
 			return JSON.stringify(row);
 		},
 	},
-};
+];
 
 
 
 $(function() {
 	/* MODELS */
-	FilterControlModel = Backbone.Model.extend({
-		defaults: {
-			name: "filter",
-			title: "A Filter",
-			enabled: false,
-		},
-
-		toggle: function() {
-			this.set({enabled: !this.get('enabled')});
-		}
-	});
-
 	FilterModel = Backbone.Model.extend({
 		defaults: {
 			name: "filter",
@@ -104,7 +109,7 @@ $(function() {
 			filter_html: "<input type='text' name='filter' id='filter'>",
 			init: function() {},
 			render: function(row) { return row[self.name]; },
-			enabled: false,
+			enabled: true,
 		},
 
 		initialize: function() {
@@ -112,7 +117,6 @@ $(function() {
 		},
 
 		toggle: function() {
-			console.log("toggle filter: "+self.name);
 			this.set({enabled: !this.get('enabled')});
 		}
 	});
@@ -133,14 +137,43 @@ $(function() {
 		defaults: {
 			currentPage: 1,
 			totalPages: 1,
+			liveMode: false,
+		},
+		firstPage: function() {
+			if(this.get("currentPage") > 1) {
+				this.setCurrentPage(1);
+			}
+		},
+		prevPage: function() {
+			if(this.get("currentPage") > 1) {
+				this.setCurrentPage(this.get("currentPage") - 1);
+			}
+		},
+		setCurrentPage: function(n) {
+			//console.log("Moving to page "+n);
+			this.set("currentPage", n);
+		},
+		setTotalPages: function(n) {
+			this.set("totalPages", n);
+		},
+		nextPage: function() {
+			if(this.get("currentPage") < this.get("totalPages")) {
+				this.setCurrentPage(this.get("currentPage") + 1);
+			}
+		},
+		lastPage: function() {
+			if(this.get("currentPage") > 1) {
+				this.setCurrentPage(this.get("totalPages"));
+			}
+		},
+		toggleLive: function() {
+			//console.log("Toggling live mode");
+			this.set("liveMode", !this.get("liveMode"));
 		},
 	});
 
-	/* COLLECTIONS */
-	FilterControlList = Backbone.Collection.extend({
-		model: FilterControlModel
-	});
 
+	/* COLLECTIONS */
 	FilterList = Backbone.Collection.extend({
 		model: FilterModel
 	});
@@ -149,14 +182,18 @@ $(function() {
 		model: RowModel
 	});
 
+
 	/* VIEWS */
-	FilterControlView = Backbone.View.extend({
+	var filters = new FilterList;
+	var rows = new RowList;
+	var paginator = new PaginatorModel;
+
+	FilterToggleView = Backbone.View.extend({
 		tagName: 'label',
-		className: 'filterControl',
-		template: _.template($('#filter-control-template').html()),
+		template: _.template($('#filter-toggle-template').html()),
 
 		events: {
-			'click': 'toggle'
+			'click INPUT': 'toggle'
 		},
 
 		render: function() {
@@ -166,48 +203,61 @@ $(function() {
 
 		toggle: function() {
 			this.model.toggle();
-			this.$el.toggleClass('enabled', this.model.get('enabled'));
+			$("TD."+this.model.get("name")).toggle(this.model.get("enabled"));
 		}
 	});
 
-	FilterView = Backbone.View.extend({
+	FilterControlView = Backbone.View.extend({
 		tagName: 'td',
-		className: 'filter',
+		//className: 'filter',
 
 		events: {
-			'click': 'toggle'
+			"filter value changed": "changed",
 		},
 
 		initialize: function() {
-			this.$el.html(this.model.get("title") + "<br>" + this.model.get("filter_html"));
-			//this.$el.css('background-image', 'url('+this.model.get('src')+')');
+			this.model.on("change:enabled", this.render, this);
 		},
 
 		render: function() {
+			if(this.model.get("enabled")) {
+				this.$el.html(this.model.get("title") + "<br>" + this.model.get("filter_html"));
+				var init = this.model.get("init");
+				if(init) init();
+			}
+			else {
+				this.$el.empty();
+			}
+
+			$("ARTICLE").css("top", $("HEADER").height()+1);
+			$("ARTICLE").css("bottom", $("FOOTER").height()+1);
+			$("SECTION.main").css("right", $("SECTION.settings").width()+1);
+			$("HEADER").css("padding-right", $("SECTION.settings").width()+1);
 			return this;
 		},
 
-		toggle: function() {
-			this.model.toggle();
-			this.$el.toggleClass('enabled', this.model.get('enabled'));
-		}
+		changed: function() {
+		},
 	});
 
 	RowView = Backbone.View.extend({
 		tagName: 'tr',
 
 		initialize: function() {
-			this.model.bind('change', this.render, this);
 			this.model.bind('remove', this.remove, this);
 
-			var html = "";
-			var self = this;
-			$.each(["severity", "timestamp", "message"], function(i, n) {
-				html += "<td class='"+n+"'>"+self.model.get(n)+"</td>";
-			});
-			this.$el.html(html);
 			this.$el.addClass('severity-'+this.model.get("severity"));
 			this.$el.addClass('message');
+		},
+
+		render: function() {
+			var html = "";
+			var self = this;
+			_.each(columns, function(el, idx, lst) {
+				html += "<td class='"+el.name+"'>"+self.model.get(el.name)+"</td>";
+			});
+			this.$el.html(html);
+			return this;
 		},
 
 		remove: function() {
@@ -220,38 +270,51 @@ $(function() {
 		template: _.template($('#paginator-template').html()),
 
 		events: {
-			'click .remove': 'remove'
+			'click .firstpage': 'firstPage',
+			'click .prevpage': 'prevPage',
+			'click .nextpage': 'nextPage',
+			'click .lastpage': 'lastPage',
+			'click .livemode': 'toggleLive',
+		},
+
+		initialize: function() {
+			this.model.on("change", this.render, this);
 		},
 
 		render: function() {
 			this.$el.html( this.template( this.model.toJSON() ) );
 			return this;
 		},
+
+		firstPage: function() {
+			this.model.firstPage();
+		},
+		prevPage: function() {
+			this.model.prevPage();
+		},
+		nextPage: function() {
+			this.model.nextPage();
+		},
+		lastPage: function() {
+			this.model.lastPage();
+		},
+		toggleLive: function() {
+			this.model.toggleLive();
+		},
 	});
 
 	// App view
-	var filterControls = new FilterControlList;
-	var filters = new FilterList;
-	var rows = new RowList;
-	var paginator = new PaginatorModel;
-
 	AppView = Backbone.View.extend({
 		el: $('#rows'),
 
 		initialize: function() {
-			filterControls.on('add', this.addFilterControl, this);
 			filters.on('add', this.addFilter, this);
+			filters.on('remove', this.removeFilter, this);
 			rows.on('add', this.addRow, this);
+			rows.on('remove', this.removeRow, this);
 
 			var view = new PaginatorView({model: paginator});
-			$('#settings').append( view.render().$el );
-
-			$.each(columns, function(colname, col) {
-				filterControls.add({
-					name: col.name,
-					title: col.title,
-				});
-			});
+			$('.settings').prepend( view.render().$el );
 
 			$.each(columns, function(colname, col) {
 				filters.add(col);
@@ -262,7 +325,8 @@ $(function() {
 					$("#filters").serialize(),
 					function(response)
 			{
-				//render_paginator(response.page, response.pages);
+				paginator.setCurrentPage(response.page);
+				paginator.setTotalPages(response.pages);
 				for(var i=0; i<response.messages.length; i++) {
 					rows.add(response.messages[i]);
 				}
@@ -273,25 +337,21 @@ $(function() {
 
 		},
 
-		addFilterControl: function(filterControl) {
-			var view = new FilterControlView({model: filterControl});
-			$('#controls').append( view.render().$el );
-		},
-
 		addFilter: function(filter) {
-			var view = new FilterView({model: filter});
+			var view = new FilterToggleView({model: filter});
+			$('#controls').append( view.render().$el );
+			var view = new FilterControlView({model: filter});
 			$('#headings').append( view.render().$el );
-
-			$("ARTICLE").css("top", $("HEADER").height()+1);
-			$("ARTICLE").css("bottom", $("FOOTER").height()+1);
-			$("SECTION.main").css("right", $("SECTION.settings").width()+1);
-			$("HEADER").css("padding-right", $("SECTION.settings").width()+1);
+		},
+		removeFilter: function(filter) {
 		},
 
 		addRow: function(row) {
 			var view = new RowView({model: row});
 			$('#rows').append( view.render().$el );
-		}
+		},
+		removeRow: function(row) {
+		},
 	});
 
 	var app = new AppView;

@@ -5,7 +5,17 @@
 		<link rel='icon' type='image/x-icon' href='/static/ploddle.ico'>
 		<%
 		def var(name):
+			return "<%- "+name+" %>"
+		def raw(name):
 			return "<%= "+name+" %>"
+		def code(name):
+			return "<% "+name+" %>"
+		def checkif():
+			return """
+			<% if(enabled) { %>
+			checked="checked"
+			<% } %>
+			"""
 		%>
 	</head>
 	<body>
@@ -42,17 +52,17 @@
 
 		<script type="text/template" id="paginator-template">
 			<div id="paginator">
-				<a href="#" id="firstpage">&#x21E4;</a>
-				<a href="#" id="prevpage">&#x2190;</a>
+				<a href="#" class="firstpage">&#x21E4;</a>
+				<a href="#" class="prevpage">&#x2190;</a>
 				<span id="currentPage">${var("currentPage")|n}</span> /
 				<span id="totalPages">${var("totalPages")|n}</span>
-				<a href="#" id="nextpage">&#x2192;</a>
-				<a href="#" id="lastpage">&#x21E5;</a>
+				<a href="#" class="nextpage">&#x2192;</a>
+				<a href="#" class="lastpage">&#x21E5;</a>
+				<br><label><input type="checkbox" class="livemode"> Live Mode</label>
 			</div>
-			<p><label><input type="checkbox" id="livemode"> Live Mode</label>
 		</script>
-		<script type="text/template" id="filter-control-template">
-			<label><input type='checkbox' id='${var("name")|n}' />${var("title")|n}</label>
+		<script type="text/template" id="filter-toggle-template">
+			<label><input type='checkbox' id='${var("name")|n}' ${checkif()|n}/>${var("title")|n}</label>
 		</script>
 	</body>
 </html>
