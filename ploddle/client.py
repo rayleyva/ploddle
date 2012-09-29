@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 
 import sys
-from ConfigParser import RawConfigParser
 import requests
 from blessings import Terminal
+from ploddle.config import get_config
 import time
 import os
 
@@ -88,12 +88,10 @@ def get_data():
 
 def main(args):
     try:
-        config = RawConfigParser()
-        if os.path.exists(os.path.expanduser("~/.config/ploddle.conf")):
-            config.read(os.path.expanduser("~/.config/ploddle.conf"))
+        config = get_config("top")
             
-            global row_format
-            row_format = config.get("top", "row_format")
+        global row_format
+        row_format = config.get("top", "row_format")
             
         with t.fullscreen():
             while True:
