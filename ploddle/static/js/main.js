@@ -8,6 +8,14 @@ function json_to_select(url, select) {
 	});
 }
 
+function fix_header_widths() {
+	$("#headings TR:eq(1) TD").each(function(i, el) {
+		$(el).width(
+			$("#rows TR:eq(1) TD:eq("+i+")").width()
+		);
+	});
+}
+
 var columns = [
 	{
 		name: "severity",
@@ -330,6 +338,8 @@ $(function() {
 				for(var i=0; i<response.messages.length; i++) {
 					rows.add(response.messages[i]);
 				}
+
+				fix_header_widths();
 			});
 		},
 
