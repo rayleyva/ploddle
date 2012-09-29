@@ -33,11 +33,10 @@
 		</footer>
 
 		<div id="js" style="display: none;">
-			<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.1/jquery.min.js"></script>
+			<script src="/static/js/vendor/jquery-1.8.1.js"></script>
 			<script src="/static/js/vendor/underscore.js"></script>
 			<script src="/static/js/vendor/backbone.js"></script>
 			<script src="/static/js/vendor/less.js"></script>
-			<script src="/static/js/plugins.js"></script>
 			<script src="/static/js/main.js"></script>
 		</div>
 
