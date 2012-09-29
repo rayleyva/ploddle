@@ -1,5 +1,5 @@
 BODY {
-	background: url(/static/ploddle.png);
+	background: url(/static/img/ploddle.png);
 	background-size: contain;
 	background-attachment: fixed;
 	background-repeat: no-repeat;
@@ -18,11 +18,19 @@ HEADER {
 	right: 0px;
 	background: white;
 	border-bottom: 1px solid black;
-	z-index: 1;
+	z-index: 10;
+}
+
+ARTICLE {
+	position: fixed;
+	top: 0px;     /* will be corrected by JS */
+	bottom: 0px;  /* as above */
+	left: 0px;
+	right: 0px;
 }
 
 SECTION.main {
-	position: fixed;
+	position: absolute;
 	top: 0px;     /* will be corrected by JS */
 	bottom: 0px;  /* as above */
 	left: 0px;
@@ -32,16 +40,17 @@ SECTION.main {
 }
 
 SECTION.settings {
-	display: none;
-	position: fixed;
-	top: 60;
-	left: 60;
-	z-index: 2;
+	position: absolute;
+	top: 0px;     /* will be corrected by JS */
+	bottom: 0px;  /* as above */
+	right: 0px;
+	z-index: 5;
+	overflow-y: scroll;
+	border-left: 1px solid black;
 
-	border: 1px solid black;
-	background: white;
-	border-radius: 16px;
-	padding: 8px;
+	LABEL {
+		display: block;
+	}
 }
 #columns UL {
 	list-style: none;
@@ -59,7 +68,7 @@ FOOTER {
 	background: white;
 	border-top: 1px solid black;
 	text-align: center;
-	z-index: 1;
+	z-index: 10;
 }
 
 .messageview {
@@ -67,25 +76,30 @@ FOOTER {
 	width: 100%;
 	font-family: monospace;
 	font-size: 10px;
-}
-.messageview TR TD {
-	padding: 2px 6px;
-}
-.messageview TR.message TD {
-	border-top: 1px solid gray;
-	min-width: 64px;
-}
-.messageview TR.message:first-child TD {
-	border-top: 0px;
-}
-.messageview SELECT, .messageview INPUT {
-	width: 100%;
+
+	TR TD {
+		padding: 2px 6px;
+	}
+	TR.message TD {
+		border-top: 1px solid gray;
+		min-width: 64px;
+	}
+	TR.message:first-child TD {
+		border-top: 0px;
+	}
+	SELECT, INPUT {
+		width: 100%;
+	}
 }
 
 TD.host, TD.timestamp, TD.daemon {
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
+}
+
+#paginator {
+	text-align: center;
 }
 
 .severity-0 {color: black;  background-color: #F44;}

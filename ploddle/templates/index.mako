@@ -1,10 +1,12 @@
 <html>
 	<head>
 		<title>Ploddle!</title>
-		<link rel="stylesheet" type="text/css" href="/static/ploddle.css">
+        <link rel="stylesheet/less" href="/static/css/ploddle.less">
 		<link rel='icon' type='image/x-icon' href='/static/ploddle.ico'>
-		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.1/jquery.min.js"></script>
-		<script src="/static/ploddle.js"></script>
+		<%
+		def var(name):
+			return "<%= "+name+" %>"
+		%>
 	</head>
 	<body>
 		<header>
@@ -16,29 +18,42 @@
 			</form>
 		</header>
 
-		<section class="main">
-			<table class="messageview" id="messages">
-			</table>
-		</section>
+		<article>
+			<section class="settings">
+				<form id="controls"></form>
+			</section>
 
-		<section class="settings">
-			<form id="columns">
-			</form>
-		</section>
+			<section class="main">
+				<table class="messageview" id="rows">
+				</table>
+			</section>
+		</article>
 
 		<footer>
-			<span id="paginator">
+		</footer>
+
+		<div id="js" style="display: none;">
+			<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.1/jquery.min.js"></script>
+			<script src="/static/js/vendor/underscore.js"></script>
+			<script src="/static/js/vendor/backbone.js"></script>
+			<script src="/static/js/vendor/less.js"></script>
+			<script src="/static/js/plugins.js"></script>
+			<script src="/static/js/main.js"></script>
+		</div>
+
+		<script type="text/template" id="paginator-template">
+			<div id="paginator">
 				<a href="#" id="firstpage">&#x21E4;</a>
 				<a href="#" id="prevpage">&#x2190;</a>
-				<span id="page"></span> /
-				<span id="pages"></span>
+				<span id="currentPage">${var("currentPage")|n}</span> /
+				<span id="totalPages">${var("totalPages")|n}</span>
 				<a href="#" id="nextpage">&#x2192;</a>
 				<a href="#" id="lastpage">&#x21E5;</a>
-			</span>
-			&mdash;
-			<label><input type="checkbox" id="livemode"> Live Mode</label>
-			&mdash;
-			<a href="#" id="showsettings">Settings</a>
-		</footer>
+			</div>
+			<p><label><input type="checkbox" id="livemode"> Live Mode</label>
+		</script>
+		<script type="text/template" id="filter-control-template">
+			<label><input type='checkbox' id='${var("name")|n}' />${var("title")|n}</label>
+		</script>
 	</body>
 </html>
