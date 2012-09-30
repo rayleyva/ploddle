@@ -1,7 +1,7 @@
 <html>
 	<head>
 		<title>Ploddle!</title>
-        <link rel="stylesheet/less" href="/static/css/ploddle.less">
+		<link rel="stylesheet/less" href="/static/css/ploddle.less">
 		<link rel='icon' type='image/x-icon' href='/static/ploddle.ico'>
 		<%
 		def var(name):
@@ -21,9 +21,9 @@
 	<body>
 		<header>
 			<form id="filters">
-				<input type="hidden" name="page" id="pageinput" value="1">
-				<input type="hidden" id="pagesinput" value="1">
-				<input type="hidden" name="since" id="since" value="">
+				<input type="hidden" name="page" id="pageinput" value="1" />
+				<input type="hidden" id="pagesinput" value="1" />
+				<input type="hidden" name="since" id="since" value="" />
 				<table class="messageview" id="headings"></table>
 			</form>
 		</header>
@@ -34,13 +34,11 @@
 			</section>
 
 			<section class="main">
-				<table class="messageview" id="rows">
-				</table>
+				<table class="messageview" id="rows"></table>
 			</section>
 		</article>
 
-		<footer>
-		</footer>
+		<footer></footer>
 
 		<div id="js" style="display: none;">
 			<script src="/static/js/vendor/jquery-1.8.1.js"></script>
