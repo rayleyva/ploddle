@@ -233,7 +233,7 @@ $(function() {
 
 		toggle: function() {
 			this.model.toggle();
-			$("TD."+this.model.get("name")).toggle(this.model.get("enabled"));
+			//$("TD."+this.model.get("name")).toggle(this.model.get("enabled"));
 		},
 	});
 
@@ -262,6 +262,27 @@ $(function() {
 		},
 
 		changed: function() {
+		},
+	});
+
+	ColumnTogglerView = Backbone.View.extend({
+		tagName: 'style',
+
+		initialize: function() {
+			filters.on("change:enabled", this.render, this);
+			this.el.type = "text/css";
+		},
+
+		render: function() {
+			var css = "";
+			_.each(this.model.models, function(model) {
+				var name = model.get("name");
+				var display = model.get("enabled") ? "table-cell" : "hidden";
+				css += "#rows TD."+name+" {display: "+display+"}\n";
+			});
+			this.el.cssText = css;
+
+			return this;
 		},
 	});
 
@@ -353,6 +374,9 @@ $(function() {
 
 			var view = new PaginatorView({model: paginator});
 			$('.settings').prepend( view.render().$el );
+
+			var view = new ColumnTogglerView({model: filters});
+			$('HEAD').append( view.render().$el );
 
 			$.each(columns, function(colname, col) {
 				filters.add(col);
