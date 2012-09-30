@@ -9,7 +9,7 @@ function json_to_select(url, select) {
 }
 
 function fix_header_widths() {
-	$("#headings TR:eq(1) TD").each(function(i, el) {
+	$("#headings TD").each(function(i, el) {
 		$(el).width(
 			$("#rows TR:eq(1) TD:eq("+i+")").width()
 		);
@@ -20,7 +20,7 @@ var columns = [
 	{
 		name: "severity",
 		title: "Severity",
-		filter_html: '<select title="severity" id="severity">'+
+		filterHtml: '<select name="severity" id="severity">'+
 			'<option value="2">Crit</option>'+
 			'<option value="3">Error</option>'+
 			'<option value="4">Warn</option>'+
@@ -34,7 +34,7 @@ var columns = [
 	{
 		name: "host",
 		title: "Host",
-		filter_html: '<select title="host" id="host"></select>',
+		filterHtml: '<select name="host" id="host"></select>',
 		init: function() {
 			json_to_select("/api/hosts.json", "#host");
 		},
@@ -43,7 +43,7 @@ var columns = [
 	{
 		name: "timestamp",
 		title: "Timestamp",
-		filter_html: '<input title="timestamp" id="timestamp" type="date">',
+		filterHtml: '<input name="timestamp" id="timestamp" type="date">',
 		render: function(row) {
 			return row.get("timestamp").substring(0, 16);
 		},
@@ -52,7 +52,7 @@ var columns = [
 	{
 		name: "daemon",
 		title: "Daemon",
-		filter_html: '<select title="daemon" id="daemon"></select>',
+		filterHtml: '<select name="daemon" id="daemon"></select>',
 		init: function() {
 			json_to_select("/api/daemons.json", "#daemon");
 		},
@@ -61,17 +61,17 @@ var columns = [
 	{
 		name: "threadName",
 		title: "Thread",
-		filter_html: '<input title="threadName" id="threadName">',
+		filterHtml: '<input name="threadName" id="threadName">',
 	},
 	{
 		name: "title",
 		title: "Logger Name",
-		filter_html: '<input title="name" id="name">',
+		filterHtml: '<input name="name" id="name">',
 	},
 	{
 		name: "source1",
 		title: "Source Function",
-		filter_html: '<input title="module" id="module">',
+		filterHtml: '<input name="module" id="module">',
 		render: function(row) {
 			if(row.get("module")) {
 				return row.get("module")+":"+row.get("funcName");
@@ -84,7 +84,7 @@ var columns = [
 	{
 		name: "source2",
 		title: "Source Code",
-		filter_html: '<input title="module" id="module">',
+		filterHtml: '<input name="module" id="module">',
 		render: function(row) {
 			if(row.get("filetitle")) {
 				return row.get("filetitle")+":"+row.get("lineno");
@@ -97,13 +97,13 @@ var columns = [
 	{
 		name: "message",
 		title: "Message",
-		filter_html: '<input title="message" id="message">',
+		filterHtml: '<input name="message" id="message">',
 		enabled: true,
 	},
 	{
 		name: "debug",
 		title: "Debug Info",
-		filter_html: '',
+		filterHtml: '',
 		render: function(row) {
 			return JSON.stringify(row);
 		},
@@ -118,7 +118,7 @@ $(function() {
 		defaults: {
 			name: "filter",
 			title: "A Filter",
-			filter_html: "<input type='text' name='filter' id='filter'>",
+			filterHtml: "<input type='text' name='filter' id='filter'>",
 			init: function() {},
 			render: function(row) { return row[self.name]; },
 			enabled: false,
@@ -130,7 +130,7 @@ $(function() {
 
 		toggle: function() {
 			this.set({enabled: !this.get('enabled')});
-		}
+		},
 	});
 
 	RowModel = Backbone.Model.extend({
@@ -148,7 +148,7 @@ $(function() {
 	PaginatorModel = Backbone.Model.extend({
 		defaults: {
 			currentPage: 1,
-			totalPages: 1,
+			totalPages: 5,
 			liveMode: false,
 		},
 		firstPage: function() {
@@ -163,6 +163,7 @@ $(function() {
 		},
 		setCurrentPage: function(n) {
 			//console.log("Moving to page "+n);
+			$("#currentPage").val(n);
 			this.set("currentPage", n);
 		},
 		setTotalPages: function(n) {
@@ -191,7 +192,24 @@ $(function() {
 	});
 
 	RowList = Backbone.Collection.extend({
-		model: RowModel
+		model: RowModel,
+
+		update: function() {
+			$.getJSON(
+					"/api/messages.json",
+					$("#filters").serialize(),
+					function(response)
+			{
+				paginator.setCurrentPage(response.page);
+				paginator.setTotalPages(response.pages);
+				rows.reset();
+				for(var i=0; i<response.messages.length; i++) {
+					rows.add(response.messages[i]);
+				}
+
+				fix_header_widths();
+			});
+		},
 	});
 
 
@@ -205,7 +223,7 @@ $(function() {
 		template: _.template($('#filter-toggle-template').html()),
 
 		events: {
-			'click INPUT': 'toggle'
+			'click INPUT': 'toggle',
 		},
 
 		render: function() {
@@ -216,7 +234,7 @@ $(function() {
 		toggle: function() {
 			this.model.toggle();
 			$("TD."+this.model.get("name")).toggle(this.model.get("enabled"));
-		}
+		},
 	});
 
 	FilterControlView = Backbone.View.extend({
@@ -229,22 +247,17 @@ $(function() {
 
 		initialize: function() {
 			this.model.on("change:enabled", this.render, this);
+			this.$el.html(this.model.get("title") + "<br>" + this.model.get("filterHtml"));
 		},
 
 		render: function() {
-			if(this.model.get("enabled")) {
-				this.$el.html(this.model.get("title") + "<br>" + this.model.get("filter_html"));
-				var init = this.model.get("init");
-				if(init) init();
-			}
-			else {
-				this.$el.empty();
-			}
+			this.$el.toggle(this.model.get("enabled"));
 
 			$("ARTICLE").css("top", $("HEADER").height()+1);
 			$("ARTICLE").css("bottom", $("FOOTER").height()+1);
 			$("SECTION.main").css("right", $("SECTION.settings").width()+1);
 			$("HEADER").css("padding-right", $("SECTION.settings").width()+1);
+
 			return this;
 		},
 
@@ -254,6 +267,10 @@ $(function() {
 
 	RowView = Backbone.View.extend({
 		tagName: 'tr',
+
+		events: {
+			"click": "remove",
+		},
 
 		initialize: function() {
 			this.model.bind('remove', this.remove, this);
@@ -280,6 +297,7 @@ $(function() {
 
 		remove: function() {
 			this.model.remove();
+			this.$el.remove();
 		}
 	});
 
@@ -330,6 +348,8 @@ $(function() {
 			filters.on('remove', this.removeFilter, this);
 			rows.on('add', this.addRow, this);
 			rows.on('remove', this.removeRow, this);
+			rows.on('reset', this.resetRows, this);
+			paginator.on('change:currentPage', rows.update, rows);
 
 			var view = new PaginatorView({model: paginator});
 			$('.settings').prepend( view.render().$el );
@@ -338,19 +358,7 @@ $(function() {
 				filters.add(col);
 			});
 
-			$.getJSON(
-					"/api/messages.json",
-					$("#filters").serialize(),
-					function(response)
-			{
-				paginator.setCurrentPage(response.page);
-				paginator.setTotalPages(response.pages);
-				for(var i=0; i<response.messages.length; i++) {
-					rows.add(response.messages[i]);
-				}
-
-				fix_header_widths();
-			});
+			rows.update();
 		},
 
 		render: function() {
@@ -369,6 +377,9 @@ $(function() {
 		addRow: function(row) {
 			var view = new RowView({model: row});
 			$('#rows').append( view.render().$el );
+		},
+		resetRows: function(rows) {
+			$('#rows').empty();
 		},
 		removeRow: function(row) {
 		},

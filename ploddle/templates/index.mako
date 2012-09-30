@@ -10,9 +10,9 @@
 			return "<%= "+name+" %>"
 		def code(name):
 			return "<% "+name+" %>"
-		def checkif():
+		def checkif(field):
 			return """
-			<% if(enabled) { %>
+			<% if("""+field+""") { %>
 			checked="checked"
 			<% } %>
 			"""
@@ -21,10 +21,11 @@
 	<body>
 		<header>
 			<form id="filters">
-				<input type="hidden" name="page" id="pageinput" value="1" />
-				<input type="hidden" id="pagesinput" value="1" />
+				<input type="hidden" name="page" id="currentPage" value="1" />
 				<input type="hidden" name="since" id="since" value="" />
-				<table class="messageview" id="headings"></table>
+				<table class="messageview">
+					<tr id="headings"></td>
+				</table>
 			</form>
 		</header>
 
@@ -60,7 +61,10 @@
 			</div>
 		</script>
 		<script type="text/template" id="filter-toggle-template">
-			<label><input type='checkbox' id='${var("name")|n}' ${checkif()|n}/>${var("title")|n}</label>
+			<label>
+				<input type='checkbox' ${checkif("enabled")|n}/>
+				${var("title")|n}
+			</label>
 		</script>
 	</body>
 </html>
