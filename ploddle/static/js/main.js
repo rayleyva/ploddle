@@ -28,7 +28,7 @@ var columns = [
 			'<option value="7" selected>Debug</option>'+
 		'</select>',
 		render: function(row) {
-			return row["severity"];
+			return row.get("severity");
 		},
 	},
 	{
@@ -38,14 +38,16 @@ var columns = [
 		init: function() {
 			json_to_select("/api/hosts.json", "#host");
 		},
+		enabled: true,
 	},
 	{
 		name: "timestamp",
 		title: "Timestamp",
 		filter_html: '<input title="timestamp" id="timestamp" type="date">',
 		render: function(row) {
-			return row["timestamp"].substring(0, 16);
+			return row.get("timestamp").substring(0, 16);
 		},
+		enabled: true,
 	},
 	{
 		name: "daemon",
@@ -54,6 +56,7 @@ var columns = [
 		init: function() {
 			json_to_select("/api/daemons.json", "#daemon");
 		},
+		enabled: true,
 	},
 	{
 		name: "threadName",
@@ -70,8 +73,8 @@ var columns = [
 		title: "Source Function",
 		filter_html: '<input title="module" id="module">',
 		render: function(row) {
-			if(row["module"]) {
-				return row["module"]+":"+row["funcName"];
+			if(row.get("module")) {
+				return row.get("module")+":"+row.get("funcName");
 			}
 			else {
 				return "-";
@@ -83,8 +86,8 @@ var columns = [
 		title: "Source Code",
 		filter_html: '<input title="module" id="module">',
 		render: function(row) {
-			if(row["filetitle"]) {
-				return row["filetitle"]+":"+row["lineno"];
+			if(row.get("filetitle")) {
+				return row.get("filetitle")+":"+row.get("lineno");
 			}
 			else {
 				return "-";
@@ -95,6 +98,7 @@ var columns = [
 		name: "message",
 		title: "Message",
 		filter_html: '<input title="message" id="message">',
+		enabled: true,
 	},
 	{
 		name: "debug",
@@ -117,7 +121,7 @@ $(function() {
 			filter_html: "<input type='text' name='filter' id='filter'>",
 			init: function() {},
 			render: function(row) { return row[self.name]; },
-			enabled: true,
+			enabled: false,
 		},
 
 		initialize: function() {
@@ -170,7 +174,7 @@ $(function() {
 			}
 		},
 		lastPage: function() {
-			if(this.get("currentPage") > 1) {
+			if(this.get("currentPage") < this.get("totalPages")) {
 				this.setCurrentPage(this.get("totalPages"));
 			}
 		},
@@ -262,7 +266,13 @@ $(function() {
 			var html = "";
 			var self = this;
 			_.each(columns, function(el, idx, lst) {
-				html += "<td class='"+el.name+"'>"+self.model.get(el.name)+"</td>";
+				var data = self.model.get(el.name);
+				html += "<td class='"+el.name+"'>"+
+					(el.render ?
+						el.render(self.model) :
+						(data ? data : "-")
+					)+
+				"</td>";
 			});
 			this.$el.html(html);
 			return this;
