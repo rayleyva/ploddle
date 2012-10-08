@@ -23,3 +23,13 @@ ploddle_$(VERSION)_all.deb: ploddle/* ploddle-*
 
 ploddle_$(VERSION).noarch.rpm: ploddle/* ploddle-*
 	rpmbuild -ba ploddle.spec
+
+.venv:
+	virtualenv .venv
+	.venv/bin/pip install nose coverage pep8 requests pymongo
+
+pep8:
+	.venv/bin/pep8 --max-line-length 150 ploddle | tee .pep8.out
+
+test: .venv pep8
+	.venv/bin/nosetests -v --with-doctest ploddle --with-coverage --cover-package=ploddle

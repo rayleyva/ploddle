@@ -44,7 +44,7 @@ class PloddleViewer(threading.Thread):
         threading.Thread.__init__(self, name="Viewer")
 
         self.database = database
-        
+
         config = Configurator()
         config.add_static_view(name='static', path='static/')
 
@@ -106,7 +106,7 @@ class PloddleViewer(threading.Thread):
         raw_messages = []
         for _ in range(0, 10):
             if page >= 0:
-                raw_messages = list(coll.find(filters).sort("timestamp").skip(page*page_size).limit(page_size))
+                raw_messages = list(coll.find(filters).sort("timestamp").skip(page * page_size).limit(page_size))
                 pages = coll.find(filters).count() / page_size
             else:
                 raw_messages = list(coll.find(filters).sort("timestamp", DESCENDING).limit(page_size))

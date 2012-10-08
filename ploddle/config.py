@@ -2,6 +2,7 @@
 from ConfigParser import RawConfigParser
 import os
 
+
 def get_config(name):
     config = RawConfigParser()
 
@@ -10,9 +11,9 @@ def get_config(name):
 
     config.read([
         "/etc/ploddle.conf",
-        "/etc/ploddle/"+name+".conf",
+        "/etc/ploddle/" + name + ".conf",
         os.path.expanduser("~/.config/ploddle.conf"),
-        os.path.expanduser("~/.config/ploddle/"+name+".conf")
+        os.path.expanduser("~/.config/ploddle/" + name + ".conf")
     ])
 
     return config

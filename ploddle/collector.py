@@ -63,7 +63,7 @@ def get_hostname(host):
 def parse_syslog_packet(data):
     angle = data.index(">")
     priority = int(data[1:angle])
-    therest  = data[angle+1:]
+    therest = data[angle + 1:]
 
     # some syslog daemons send RFC3164 compliant headers,
     # some only send priority and message
@@ -75,7 +75,7 @@ def parse_syslog_packet(data):
     priority = int(priority)
     severity = priority & 0x07
     facility = priority >> 3
-    
+
     return (severity, facility, message)
 
 
@@ -112,7 +112,7 @@ class PloddleCollector(threading.Thread):
             if message.startswith("ploddle:json:"):
                 try:
                     _ploddle, _json, data = message.split(":", 2)
-                    logging.debug("Found json data: "+data)
+                    logging.debug("Found json data: " + data)
                     doc.update(json.loads(data[:-1]))
                 except Exception:
                     pass  # message will be logged as a normal message
@@ -120,11 +120,11 @@ class PloddleCollector(threading.Thread):
                 match_std = pattern_std.match(message)
                 doc["daemon"] = match_std.group(1)
                 doc["message"] = match_std.group(2).strip()
-            
+
             if "hostname" not in doc:
                 doc["hostname"] = get_hostname(host)
 
-            logging.debug("inserting: "+pformat(doc))
+            logging.debug("inserting: " + pformat(doc))
             coll.insert(doc)
 
 

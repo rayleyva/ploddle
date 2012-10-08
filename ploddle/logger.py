@@ -45,7 +45,7 @@ class PloddleFormatter(logging.Formatter):
         if d["exc_info"]:
             d["exc_info"] = str(d["exc_info"])
 
-        return "ploddle:json:"+json.dumps(d)
+        return "ploddle:json:" + json.dumps(d)
 
 
 class PloddleHandler(SysLogHandler):

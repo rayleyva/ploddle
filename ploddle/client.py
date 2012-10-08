@@ -51,7 +51,7 @@ def handle_row(row):
 
 
 def to_width(text):
-    return (text + " "*t.width)[:t.width]
+    return (text + " " * t.width)[:t.width]
 
 
 def render_header():
@@ -60,10 +60,10 @@ def render_header():
 
 
 def render_rows():
-    visible = rows[-t.height+1:-1]
+    visible = rows[-t.height + 1:-1]
     for n, r in enumerate(visible):
         text = to_width(row_format % r)
-        print t.move(n+1, 0) + severity_map[r["severity"]](text)
+        print t.move(n + 1, 0) + severity_map[r["severity"]](text)
 
 
 def render_input():
@@ -89,10 +89,10 @@ def get_data():
 def main(args):
     try:
         config = get_config("top")
-            
+
         global row_format
         row_format = config.get("top", "row_format")
-            
+
         with t.fullscreen():
             while True:
                 if get_data():
