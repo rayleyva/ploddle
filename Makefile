@@ -33,3 +33,6 @@ pep8:
 
 test: .venv pep8
 	.venv/bin/nosetests -v --with-doctest ploddle/*.py --with-coverage --cover-package=ploddle
+
+clean:
+	rm -rf .venv .pep8.out
