@@ -28,7 +28,7 @@ ploddle_$(VERSION).noarch.rpm: ploddle/* ploddle-*
 	virtualenv .venv
 	.venv/bin/pip install nose coverage pep8 requests pymongo blessings pyramid
 
-pep8:
+pep8: .venv
 	.venv/bin/pep8 --max-line-length 150 ploddle/*.py | tee .pep8.out
 
 test: .venv pep8
