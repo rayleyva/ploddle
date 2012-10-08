@@ -54,6 +54,14 @@ def get_socket(config):
 
 
 def get_hostname(host):
+    """
+    >>> get_hostname("127.0.0.1")
+    'localhost'
+    >>> get_hostname("1.2.3.4")
+    '1.2.3.4'
+
+    TODO: should do a DNS lookup...
+    """
     if host == "127.0.0.1":
         return "localhost"
     else:

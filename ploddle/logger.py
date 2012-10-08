@@ -1,5 +1,24 @@
 #!/usr/bin/env python
 
+"""
+>>> import logging
+
+>>> my_logger = logging.getLogger('ploddle.demo')
+>>> my_logger.setLevel(logging.DEBUG)
+>>> my_logger.addHandler(PloddleHandler())
+
+>>> my_logger.debug('this is debug')
+>>> my_logger.info('this is info')
+>>> my_logger.warning('this is a warning')
+>>> my_logger.error("Error message")
+>>> my_logger.critical('this is critical')
+>>> try:
+...     x = 1/0
+... except ZeroDivisionError:
+...     my_logger.exception("Error dividing by zero:")
+>>> my_logger.fatal("Fatal!")
+"""
+
 from logging.handlers import SysLogHandler
 import logging
 import sys

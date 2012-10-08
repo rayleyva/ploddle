@@ -30,11 +30,34 @@ row_format = "%(severity)-1.1s %(host)-15.15s %(daemon)-10.10s %(message)s"
 
 
 class TitleDict:
+    """
+    This is what it does:
+
+    >>> x = TitleDict()
+    >>> x['waffles']
+    'Waffles'
+    >>> x['line num']
+    'Line Num'
+
+    This is why it's useful:
+
+    >>> fmt = "%(title)10s %(line)5s %(message)s"
+    >>> data = {"title": "hello", "line": 12, "message": "this is a table with titles"}
+    >>> print fmt % TitleDict(); print fmt % data
+         Title  Line Message
+         hello    12 this is a table with titles
+    """
     def __getitem__(self, x):
         return x.title()
 
 
 class RowDict:
+    """
+    >>> fmt = "%(title)10s %(line)5s %(message)s"
+    >>> x = RowDict({"message": "it's a row"})
+    >>> print fmt % x
+             -     - it's a row
+    """
     def __init__(self, row):
         self.row = row
 
