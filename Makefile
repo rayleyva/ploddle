@@ -4,7 +4,7 @@ all: ploddle_$(VERSION)_all.deb ploddle_$(VERSION).noarch.rpm
 
 ploddle_$(VERSION)_all.deb: ploddle/* ploddle-*
 	mkdir -p fs/usr/bin/
-	cp ploddle-collector ploddle-web ploddle-top ploddle-example fs/usr/bin/
+	cp ploddle-collector ploddle-web ploddle-top fs/usr/bin/
 	mkdir -p fs/usr/lib/python2.7/site-packages/
 	cp -r ploddle fs/usr/lib/python2.7/site-packages/
 	mkdir -p fs/etc/ploddle/
