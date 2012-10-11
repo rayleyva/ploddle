@@ -16,9 +16,9 @@ import os
 def get_logger(config):
     try:
         logging.basicConfig(
-                level=logging.INFO,
-                format='%(asctime)s %(levelname)-8s %(message)s',
-                )  # filename=config.get("logging", "file"))
+            level=logging.INFO,
+            format='%(asctime)s %(levelname)-8s %(message)s',
+        )  # filename=config.get("logging", "file"))
         return True
     except Exception, e:
         print "Error starting logger: %s" % e
