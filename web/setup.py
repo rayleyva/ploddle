@@ -23,6 +23,6 @@ setup(
     ],
     entry_points="""\
         [console_scripts]
-        ploddle-web = ploddle.server.web:main
+        ploddle-web = ploddle.web:main
     """,
 )

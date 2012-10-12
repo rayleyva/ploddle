@@ -12,7 +12,7 @@ setup(
     author_email='shish+ploddle@shishnet.org',
     url='http://code.shishnet.org/ploddle',
     keywords='web syslog',
-    packages=["ploddle.logger"],
+    packages=["ploddle"],
     namespace_packages=["ploddle"],
     zip_safe=True,
 )

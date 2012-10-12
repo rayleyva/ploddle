@@ -22,6 +22,6 @@ setup(
     ],
     entry_points="""\
         [console_scripts]
-        ploddle-collector = ploddle.server.collector:main
+        ploddle-collector = ploddle.collector.main:main
     """,
 )
