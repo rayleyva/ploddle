@@ -40,12 +40,14 @@ install:
 	cd collector && python setup.py install
 	cd web       && python setup.py install
 	cd logger    && python setup.py install
+	cd ploddle   && python setup.py install
 
 eggs:
 	cd tools     && python setup.py sdist
 	cd collector && python setup.py sdist
 	cd web       && python setup.py sdist
 	cd logger    && python setup.py sdist
+	cd ploddle   && python setup.py sdist
 	mkdir dist
 	mv ./*/dist/* ./dist/
 
