@@ -26,7 +26,7 @@ ploddle_$(VERSION).noarch.rpm: ploddle/* ploddle-*
 
 test:
 	virtualenv .venv
-	.venv/bin/python setup_clients.py develop
+	.venv/bin/python setup_tools.py develop
 	.venv/bin/python setup_collector.py develop
 	.venv/bin/python setup_web.py develop
 	.venv/bin/python setup_logger.py develop
@@ -36,7 +36,7 @@ test:
 
 eggs:
 	virtualenv .venv
-	.venv/bin/python setup_clients.py sdist
+	.venv/bin/python setup_tools.py sdist
 	.venv/bin/python setup_collector.py sdist
 	.venv/bin/python setup_web.py sdist
 	.venv/bin/python setup_logger.py sdist

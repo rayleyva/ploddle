@@ -3,9 +3,9 @@ import os
 from setuptools import setup, find_packages
 
 setup(
-    name='ploddle.clients',
+    name='ploddle.tools',
     version='0.0',
-    description='a syslog-compatible log collector and browser, with enhancements',
+    description='command line Ploddle utilities',
     classifiers=[
         "Programming Language :: Python",
         "Topic :: Internet :: WWW/HTTP",
