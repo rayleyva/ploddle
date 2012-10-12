@@ -3,7 +3,7 @@
 import sys
 import requests
 from blessings import Terminal
-from ploddle.config import get_config
+from ploddle.common.config import get_config
 import time
 import os
 
