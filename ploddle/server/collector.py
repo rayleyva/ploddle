@@ -136,7 +136,7 @@ class PloddleCollector(threading.Thread):
             coll.insert(doc)
 
 
-def main(args):
+def main():
     try:
         config = SafeConfigParser()
         if os.path.exists("ploddled.conf"):
@@ -149,7 +149,3 @@ def main(args):
             PloddleCollector(config, database).run()
     except KeyboardInterrupt:
         pass
-
-
-if __name__ == '__main__':
-    sys.exit(main(sys.argv))

@@ -148,7 +148,7 @@ class PloddleViewer(threading.Thread):
         self.server.serve_forever()
 
 
-def main(args):
+def main():
     try:
         config = SafeConfigParser()
         if os.path.exists("ploddled.conf"):
@@ -161,7 +161,3 @@ def main(args):
             PloddleViewer(config, database).run()
     except KeyboardInterrupt:
         pass
-
-
-if __name__ == '__main__':
-    sys.exit(main(sys.argv))

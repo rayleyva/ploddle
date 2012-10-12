@@ -1,6 +1,0 @@
-#!/usr/bin/env python
-
-from ploddle.client.top import main
-import sys
-
-sys.exit(main(sys.argv))
