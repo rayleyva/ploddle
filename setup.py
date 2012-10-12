@@ -13,23 +13,21 @@ requires = [
     'pep8',
     ]
 
-setup(name='ploddle',
+setup(name='Ploddle',
       version='0.0',
-      description='ploddle',
+      description='a syslog-compatible log collector and browser, with enhancements',
       classifiers=[
         "Programming Language :: Python",
-        "Framework :: Pyramid",
         "Topic :: Internet :: WWW/HTTP",
-        "Topic :: Internet :: WWW/HTTP :: WSGI :: Application",
         ],
       author='',
       author_email='',
       url='',
-      keywords='web wsgi bfg pylons pyramid',
+      keywords='web syslog',
       packages=find_packages(),
       include_package_data=True,
       zip_safe=False,
-      test_suite='gummy',
+      #test_suite='ploddle',
       install_requires=requires,
       entry_points="""\
       [console_scripts]
