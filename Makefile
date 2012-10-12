@@ -26,7 +26,10 @@ ploddle_$(VERSION).noarch.rpm: ploddle/* ploddle-*
 
 test:
 	virtualenv .venv
-	.venv/bin/python setup.py develop
+	.venv/bin/python setup_client.py develop
+	.venv/bin/python setup_server.py develop
+	.venv/bin/python setup_logger.py develop
+	.venv/bin/pip install pep8 nose coverage
 	.venv/bin/pep8 --max-line-length 150 ploddle/*/*.py || true
 	.venv/bin/nosetests -v --with-doctest --with-coverage --cover-package=ploddle ploddle/*/*.py
 
