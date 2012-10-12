@@ -26,20 +26,26 @@ ploddle_$(VERSION).noarch.rpm: ploddle/* ploddle-*
 
 test:
 	virtualenv .venv
-	.venv/bin/python setup_tools.py develop
-	.venv/bin/python setup_collector.py develop
-	.venv/bin/python setup_web.py develop
-	.venv/bin/python setup_logger.py develop
+	.venv/bin/python tools/setup.py develop
+	.venv/bin/python collector/setup.py develop
+	.venv/bin/python web/setup.py develop
+	.venv/bin/python logger/setup.py develop
 	.venv/bin/pip install pep8 nose coverage
-	.venv/bin/pep8 --max-line-length 150 ploddle/*/*.py || true
-	.venv/bin/nosetests -v --with-doctest --with-coverage --cover-package=ploddle ploddle/*/*.py
+	.venv/bin/pep8 --max-line-length 150 */ploddle/*/*.py || true
+	.venv/bin/nosetests -v --with-doctest --with-coverage --cover-package=ploddle */ploddle/*/*.py
+
+install:
+	virtualenv .venv
+	.venv/bin/python setup_tools.py install
+	.venv/bin/python setup_collector.py install
+	.venv/bin/python setup_web.py install
+	.venv/bin/python setup_logger.py install
 
 eggs:
-	virtualenv .venv
-	.venv/bin/python setup_tools.py sdist
-	.venv/bin/python setup_collector.py sdist
-	.venv/bin/python setup_web.py sdist
-	.venv/bin/python setup_logger.py sdist
+	python tools/setup.py develop
+	python collector/setup.py develop
+	python web/setup.py develop
+	python logger/setup.py develop
 
 clean:
 	git clean -fdx
