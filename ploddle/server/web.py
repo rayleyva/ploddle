@@ -46,10 +46,10 @@ class PloddleViewer(threading.Thread):
         self.database = database
 
         config = Configurator()
-        config.add_static_view(name='static', path='static/')
+        config.add_static_view(name='static', path='ploddle.server:static/')
 
         config.add_route('index', '/')
-        config.add_view(self.index, route_name='index', renderer='ploddle:templates/index.mako')
+        config.add_view(self.index, route_name='index', renderer='ploddle.server:templates/index.mako')
 
         config.add_route('api_messages', '/api/messages.json')
         config.add_view(self.api_messages, route_name='api_messages', renderer='json')
