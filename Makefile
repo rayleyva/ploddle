@@ -26,26 +26,28 @@ ploddle_$(VERSION).noarch.rpm: ploddle/* ploddle-*
 
 test:
 	virtualenv .venv
-	.venv/bin/python tools/setup.py develop
-	.venv/bin/python collector/setup.py develop
-	.venv/bin/python web/setup.py develop
-	.venv/bin/python logger/setup.py develop
+	cd tools     && ../.venv/bin/python setup.py develop
+	cd collector && ../.venv/bin/python setup.py develop
+	cd web       && ../.venv/bin/python setup.py develop
+	cd logger    && ../.venv/bin/python setup.py develop
 	.venv/bin/pip install pep8 nose coverage
 	.venv/bin/pep8 --max-line-length 150 */ploddle/*/*.py || true
 	.venv/bin/nosetests -v --with-doctest --with-coverage --cover-package=ploddle */ploddle/*/*.py
 
 install:
 	virtualenv .venv
-	.venv/bin/python setup_tools.py install
-	.venv/bin/python setup_collector.py install
-	.venv/bin/python setup_web.py install
-	.venv/bin/python setup_logger.py install
+	cd tools     && python setup.py install
+	cd collector && python setup.py install
+	cd web       && python setup.py install
+	cd logger    && python setup.py install
 
 eggs:
-	python tools/setup.py develop
-	python collector/setup.py develop
-	python web/setup.py develop
-	python logger/setup.py develop
+	cd tools     && python setup.py sdist
+	cd collector && python setup.py sdist
+	cd web       && python setup.py sdist
+	cd logger    && python setup.py sdist
+	mkdir dist
+	mv ./*/dist/* ./dist/
 
 clean:
 	git clean -fdx
