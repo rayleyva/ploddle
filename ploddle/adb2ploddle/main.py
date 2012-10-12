@@ -45,13 +45,9 @@ def pipe(name, stream, sock, target):
             print "Error, bad line: ", line
 
 
-def main(args):
+def main():
     name = None
     target = ("127.0.0.1", 5141)
     
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     pipe(name, sys.stdin, sock, target)
-
-
-if __name__ == "__main__":
-    sys.exit(main(sys.argv))

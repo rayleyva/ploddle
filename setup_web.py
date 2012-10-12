@@ -3,7 +3,7 @@ import os
 from setuptools import setup, find_packages
 
 setup(
-    name='ploddle.server',
+    name='ploddle.web',
     version='0.0',
     description='a syslog-compatible log collector and browser, with enhancements',
     classifiers=[
@@ -14,7 +14,7 @@ setup(
     author_email='shish+ploddle@shishnet.org',
     url='http://code.shishnet.org/ploddle',
     keywords='web syslog',
-    packages=["ploddle.server"],
+    packages=["ploddle.web"],
     namespace_packages=["ploddle"],
     include_package_data=True,
     zip_safe=True,
@@ -26,6 +26,5 @@ setup(
     entry_points="""\
         [console_scripts]
         ploddle-web = ploddle.server.web:main
-        ploddle-collector = ploddle.server.collector:main
     """,
 )

@@ -3,7 +3,7 @@ import os
 from setuptools import setup, find_packages
 
 setup(
-    name='ploddle.client',
+    name='ploddle.clients',
     version='0.0',
     description='a syslog-compatible log collector and browser, with enhancements',
     classifiers=[
@@ -14,7 +14,7 @@ setup(
     author_email='shish+ploddle@shishnet.org',
     url='http://code.shishnet.org/ploddle',
     keywords='web syslog',
-    packages=["ploddle.client"],
+    packages=["ploddle.top", "ploddle.adb2ploddle"],
     namespace_packages=["ploddle"],
     include_package_data=True,
     zip_safe=True,
@@ -25,6 +25,7 @@ setup(
     ],
     entry_points="""\
         [console_scripts]
-        ploddle-top = ploddle.client.top:main
+        ploddle-top = ploddle.top.main:main
+        adb2ploddle = ploddle.adb2ploddle.main:main
     """,
 )
