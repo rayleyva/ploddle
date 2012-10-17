@@ -28,7 +28,7 @@ def pipe(name, stream, sock, target):
             daemon = matches.group(2)
             pid = matches.group(3)
             message = matches.group(4)
-            
+
             facility = syslog.LOG_USER
             severity = adblevels[adblevel]
             priority = facility << 3 | severity
@@ -48,6 +48,6 @@ def pipe(name, stream, sock, target):
 def main():
     name = None
     target = ("127.0.0.1", 5141)
-    
+
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     pipe(name, sys.stdin, sock, target)
