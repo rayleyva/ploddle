@@ -13,6 +13,7 @@ setup(
     url='http://code.shishnet.org/ploddle',
     keywords='web syslog',
     packages=["ploddle.web"],
+    package_data={'ploddle.web': ['ploddle/web/*/']},
     namespace_packages=["ploddle"],
     include_package_data=True,
     zip_safe=True,
@@ -23,6 +24,6 @@ setup(
     ],
     entry_points="""\
         [console_scripts]
-        ploddle-web = ploddle.web:main
+        ploddle-web = ploddle.web.main:main
     """,
 )
