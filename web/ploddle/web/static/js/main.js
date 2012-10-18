@@ -12,6 +12,7 @@ function fix_header_widths() {
 	$("#headings TD").each(function(i, el) {
 		$(el).width(
 			$("#rows TR:eq(1) TD:eq("+i+")").width()
+			+18
 		);
 	});
 }
@@ -233,7 +234,7 @@ $(function() {
 
 		toggle: function() {
 			this.model.toggle();
-			//$("TD."+this.model.get("name")).toggle(this.model.get("enabled"));
+			$("TD."+this.model.get("name")).toggle(this.model.get("enabled"));
 		},
 	});
 
@@ -248,6 +249,7 @@ $(function() {
 		initialize: function() {
 			this.model.on("change:enabled", this.render, this);
 			this.$el.html(this.model.get("title") + "<br>" + this.model.get("filterHtml"));
+			this.model.get("init")();
 		},
 
 		render: function() {
@@ -295,6 +297,7 @@ $(function() {
 
 		initialize: function() {
 			this.model.bind('remove', this.remove, this);
+			//filters.on("change:enabled", this.render, this);
 
 			this.$el.addClass('severity-'+this.model.get("severity"));
 			this.$el.addClass('message');
