@@ -11,7 +11,7 @@ import json
 import datetime
 import os
 from pprint import pformat
-from socket import socket, AF_INET, SOCK_DGRAM
+from socket import socket, gethostbyaddr, AF_INET, SOCK_DGRAM
 
 
 def get_logger(config):
@@ -62,9 +62,15 @@ def get_hostname(host):
 
     TODO: should do a DNS lookup...
     """
-    if host == "127.0.0.1":
-        return "localhost"
+    rdns = "none"
+    if rdns == "none":
+        return host
+    elif rdns == "hosts":
+        pass
+    elif rdns == "all":
+        return gethostbyname(host)[0]
     else:
+        # raise exception
         return host
 
 
