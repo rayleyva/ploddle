@@ -55,7 +55,7 @@ def get_socket(config):
 
 def get_hostname(host):
     """
-    >>> get_hostname("127.0.0.1")
+    >X>X> get_hostname("127.0.0.1")
     'localhost'
     >>> get_hostname("1.2.3.4")
     '1.2.3.4'
