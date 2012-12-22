@@ -87,8 +87,8 @@ var columns = [
 		title: "Source Code",
 		filterHtml: '<input name="module" id="module">',
 		render: function(row) {
-			if(row.get("filetitle")) {
-				return row.get("filetitle")+":"+row.get("lineno");
+			if(row.get("filename")) {
+				return row.get("filename")+":"+row.get("lineno");
 			}
 			else {
 				return "-";
