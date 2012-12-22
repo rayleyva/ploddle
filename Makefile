@@ -30,6 +30,7 @@ test:
 	cd collector && ../.venv/bin/python setup.py develop
 	cd web       && ../.venv/bin/python setup.py develop
 	cd logger    && ../.venv/bin/python setup.py develop
+	cd gui       && ../.venv/bin/python setup.py develop
 	.venv/bin/pip install pep8 nose coverage
 	.venv/bin/pep8 --max-line-length 150 */ploddle/*/*.py || true
 	.venv/bin/nosetests -v --with-doctest --with-coverage --cover-package=ploddle */ploddle/*/*.py
@@ -40,6 +41,7 @@ install:
 	cd collector && python setup.py install
 	cd web       && python setup.py install
 	cd logger    && python setup.py install
+	cd gui       && python setup.py install
 	cd ploddle   && python setup.py install
 
 eggs:
@@ -47,6 +49,7 @@ eggs:
 	cd collector && python setup.py sdist
 	cd web       && python setup.py sdist
 	cd logger    && python setup.py sdist
+	cd gui       && python setup.py sdist
 	cd ploddle   && python setup.py sdist
 	mkdir dist
 	mv ./*/dist/* ./dist/
